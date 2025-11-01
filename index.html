@@ -350,7 +350,7 @@
     const userAgreementLink = document.getElementById('userAgreementLink');
 
     // Проверка, согласился ли пользователь ранее
-    const userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
+    let userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
 
     function showIntro() {
       intro.classList.remove('hidden');
@@ -383,7 +383,7 @@
       document.body.style.overflow = 'auto';
     }
 
-    window.addEventListener('load', () => {
+    function startAppFlow() {
       showIntro();
       setTimeout(() => {
         hideIntro();
@@ -393,10 +393,15 @@
           showContentAndAgreement();
         }
       }, 5000);
+    }
+
+    window.addEventListener('load', () => {
+      startAppFlow();
     });
 
     agreeBtn.addEventListener('click', () => {
       localStorage.setItem('qvantikUserAgreed', 'true');
+      userAgreed = true;
       content.style.display = 'none';
       agreement.style.display = 'none';
       showWorkspace();
@@ -430,8 +435,7 @@
     });
 
     // Пользовательское соглашение текст
-    const userAgreementText = `
-Пользовательское соглашение
+    const userAgreementText = `Пользовательское соглашение
 
 Настоящее Пользовательское соглашение (актуальная редакция соглашения, опубликованная по ссылке (https://danil89ka2001-byte.github.io/telegram-webapp/) является публичной офертой и определяет условия использования веб-сайта Qvantik доступного по ссылке (https://danil89ka2001-byte.github.io/telegram-webapp/) (далее — Сайт), любыми пользователями сети Интернет, просматривающими Сайт (далее — Пользователи Сайта).
 
@@ -498,7 +502,7 @@
       closeUserAgreementModal();
     });
 
-    // Close modal on overlay click (optional)
+    // Close modal on overlay click
     modalOverlay.addEventListener('click', (e) => {
       if (e.target === modalOverlay) {
         closeUserAgreementModal();
@@ -510,88 +514,6 @@
       if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
         closeUserAgreementModal();
       }
-    });
-
-    // Existing code for intro/agreement/workspace...
-
-    // Проверка, согласился ли пользователь ранее
-    const userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
-
-    function showIntro() {
-      intro.classList.remove('hidden');
-      intro.style.display = 'flex';
-      content.style.display = 'none';
-      agreement.style.display = 'none';
-      workspace.classList.remove('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function hideIntro() {
-      intro.classList.add('hidden');
-      setTimeout(() => {
-        intro.style.display = 'none';
-      }, 1000); 
-    }
-
-    function showContentAndAgreement() {
-      content.classList.add('active');
-      content.style.display = 'block';
-      agreement.style.display = 'flex';
-      workspace.classList.remove('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function showWorkspace() {
-      content.style.display = 'none';
-      agreement.style.display = 'none';
-      workspace.classList.add('active');
-      document.body.style.overflow = 'auto';
-    }
-
-    window.addEventListener('load', () => {
-      showIntro();
-      setTimeout(() => {
-        hideIntro();
-        if (userAgreed) {
-          showWorkspace();
-        } else {
-          showContentAndAgreement();
-        }
-      }, 5000);
-    });
-
-    agreeBtn.addEventListener('click', () => {
-      localStorage.setItem('qvantikUserAgreed', 'true');
-      content.style.display = 'none';
-      agreement.style.display = 'none';
-      showWorkspace();
-    });
-
-    // Примитивный "фан" функционал с рандомным ответом
-    const funResponses = [
-      'Почему нейросети не берут отпуск? Они всегда в режиме обучения!',
-      'Знаете, что говорит ИИ, когда устает? "Дайте мне пару байтов!"',
-      'Если бы я мог смеяться, я бы смеялся вместе с вами!',
-      'Шутка дня: Почему компьютер никогда не спорит? Потому что боится конфликтов!',
-      'Я могу предсказать ваше настроение... Но это секрет 🤫',
-      'Развлечение загружено! Готовы к розыгрышам?',
-      'ИИ говорит: "Обнимашки виртуальные идут!" 🤗',
-      'Вы сказали: "{input}", а я думаю, это замечательно!'
-    ];
-
-    funBtn.addEventListener('click', () => {
-      let inputText = userInput.value.trim();
-      if (!inputText) {
-        response.textContent = 'Пожалуйста, напишите что-нибудь.';
-        return;
-      }
-      let randomResponse = funResponses[Math.floor(Math.random() * funResponses.length)];
-      if (randomResponse.includes('{input}')) {
-        randomResponse = randomResponse.replace('{input}', inputText);
-      }
-      response.textContent = randomResponse;
-      userInput.value = '';
-      userInput.focus();
     });
   </script>
 </body>
