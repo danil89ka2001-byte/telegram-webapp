@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>QVANTIK - Искусственный интеллект</title>
+  <title>QVANTIK - Телеграм Миниприложение</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
@@ -19,385 +19,494 @@
       background: #0d0f1a;
       color: #f0f0f5;
       overflow: hidden;
-    }
-
-    button {
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      background: #4ade80;
-      color: #0d0f1a;
-      box-shadow: 0 4px 15px rgba(74, 222, 128, 0.5);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    button:hover {
-      background: #38b764;
-      box-shadow: 0 6px 20px rgba(56, 183, 100, 0.7);
-    }
-
-    a {
-      color: #4ade80;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    a:hover {
-      color: #38b764;
-    }
-
-    /* Intro styles */
-    #intro {
-      display: none;
-      flex-direction: column;
-      align-items: center;
+      display: flex;
       justify-content: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #6e45e2, #88d3ce);
-      text-align: center;
-      opacity: 1;
-      transition: opacity 1s ease;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      text-transform: uppercase;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #intro.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #intro h1 {
-      font-size: 3.5rem;
-      letter-spacing: 0.15em;
-      margin: 1rem 0 0 0;
-      text-shadow: 0 0 20px #88d3ce, 0 0 40px #6e45e2;
-      z-index: 10;
-      position: relative;
-    }
-
-    #intro p {
-      margin: 1rem 0 0 0;
-      font-size: 1.25rem;
-      color: #d0f0f0;
-      text-shadow: 0 0 10px #88d3ce;
-      z-index: 10;
-      position: relative;
-    }
-
-    /* Content styles */
-    #content {
-      display: none;
-      height: 100vh;
-      background: radial-gradient(circle at center, #1a1d2e 0%, #0d0f1a 80%);
-      color: #cdeffd;
-      padding: 3rem 2rem 6rem;
-      overflow-y: auto;
-      text-align: center;
-      position: relative;
-      font-family: 'Montserrat', sans-serif;
-    }
-
-    #content h2 {
-      font-size: 2.8rem;
-      margin-bottom: 1rem;
-      color: #73d2de;
-      text-shadow: 0 0 15px #73d2de;
-    }
-
-    #content p {
-      font-size: 1.25rem;
-      max-width: 700px;
-      margin: 0 auto 2rem;
-      line-height: 1.6;
-      color: #a9d6e5;
-    }
-
-    .highlight {
-      color: #4ade80;
-      font-weight: 700;
-      text-shadow: 0 0 10px #4ade80;
-    }
-
-    footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
-      color: #666e7a;
-    }
-
-    /* Agreement modal at bottom */
-    #agreement {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #222a3a;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.7);
-      color: #cdeffd;
-      padding: 1.2rem 2rem;
-      display: none;
-      justify-content: space-between;
       align-items: center;
-      font-size: 1rem;
-      z-index: 1000;
-      backdrop-filter: blur(8px);
-      font-family: 'Montserrat', sans-serif;
     }
-
-    #agreement p {
-      margin: 0;
-      max-width: 80%;
-      line-height: 1.3;
-    }
-
-    /* Workspace styles modified: removed face, added Cozmo style eyes */
 
     #workspace {
-      display: none;
-      height: 100vh;
-      background: linear-gradient(135deg, #0a152a, #1d2a47);
+      background: #0d0f1a;
       color: #e0f7fa;
       font-family: 'Montserrat', sans-serif;
+      display: flex;
       justify-content: center;
       align-items: center;
-      display: flex;
+      user-select: none;
+      padding-left: 20px; /* немного левее, уменьшено */
     }
 
+    /* Container for the eyes centered with adjusted size and enough right padding */
     .eyes-container {
       display: flex;
-      gap: 80px;
+      gap: 50px; /* расстояние между глазами */
+      width: 350px; /* увеличена ширина, чтобы правый глаз не обрезался */
+      height: 160px;
       position: relative;
-      width: 360px;
-      height: 150px;
+      padding-right: 20px; /* дополнительный отступ справа */
     }
 
-    .eye {
-      width: 160px;
-      height: 150px;
-      position: relative;
-      background: radial-gradient(circle at center, #1a1f3b 40%, #0a0f23 90%);
-      border-radius: 60% / 100%;
-      box-shadow:
-        inset 0 0 15px #3a50ff,
-        0 0 30px #3a50ff88;
+    svg.eye-svg {
+      width: 140px;
+      height: 140px;
       overflow: visible;
-      filter: drop-shadow(0 0 10px #3a50ffbb);
+      box-sizing: content-box;
+      padding: 12px; /* увеличен padding чтобы границы не заходили */
     }
 
-    .eye-shape {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 130px;
-      height: 100px;
-      transform: translate(-50%, -50%);
+    rect.eye-rect {
       fill: #4a6fff;
-      filter: drop-shadow(0 0 15px #4a6fffcc);
-      transition: d 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      rx: 25;  /* радиус скругления */
+      ry: 25;
+      filter: url(#glow);
+      transition: all 0.2s ease;
     }
 
-    svg {
-      width: 130px;
-      height: 100px;
-      display: block;
-      overflow: visible;
+    path.heart {
+      fill: #ff4d6d;
+      filter: url(#glow);
+      transform-origin: 50% 60%;
+      transition: transform 0.3s ease;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div id="intro">
-    <h1>QVANTIK</h1>
-    <p>Искусственный интеллект</p>
-  </div>
-
-  <div id="content">
-    <h2>Добро пожаловать в QVANTIK</h2>
-    <p>QVANTIK — это <span class="highlight">искусственный интеллект</span>, созданный для развлечения и розыгрышей. Он умеет удивлять, развлекать и создавать уникальные интерактивные сценарии, которые подарят вам море позитива и неожиданных эмоций.</p>
-    <p>Наша нейросеть сочетает в себе передовые технологии и творческий подход, чтобы сделать общение с ней максимально увлекательным и легким. Попробуйте, и вы убедитесь, что искусственный интеллект может быть не только полезным, но и очень веселым!</p>
-    <footer>© 2024 QVANTIK AI | Все права защищены</footer>
-  </div>
-
-  <div id="agreement">
-    <p>Пожалуйста, ознакомьтесь и примите <a id="userAgreementLink">Пользовательское соглашение</a> для продолжения.</p>
-    <button id="agreeBtn">Согласен</button>
-  </div>
-
-  <div id="workspace" role="main" aria-label="Рабочее место QVANTIK">
+  <div id="workspace" role="main" aria-label="Рабочее место QVANTIK миниприложения Телеграм">
     <div class="eyes-container" aria-label="Цифровые глаза робота Cozmo" role="img">
-      <div class="eye" id="eye-left" aria-label="Левый глаз">
-        <svg viewBox="0 0 130 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path class="eye-shape" id="shape-left" d="" />
-        </svg>
-      </div>
-      <div class="eye" id="eye-right" aria-label="Правый глаз">
-        <svg viewBox="0 0 130 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path class="eye-shape" id="shape-right" d="" />
-        </svg>
-      </div>
+      <svg id="eye-left" class="eye-svg" viewBox="0 0 180 180" aria-label="Левый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
+          </filter>
+        </defs>
+        <rect id="rect-left" class="eye-rect" x="20" y="45" width="90" height="90" />
+      </svg>
+      <svg id="eye-right" class="eye-svg" viewBox="0 0 180 180" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
+          </filter>
+        </defs>
+        <rect id="rect-right" class="eye-rect" x="20" y="45" width="90" height="90" />
+      </svg>
     </div>
   </div>
 
   <script>
-    const intro = document.getElementById('intro');
-    const content = document.getElementById('content');
-    const agreement = document.getElementById('agreement');
-    const workspace = document.getElementById('workspace');
-    const agreeBtn = document.getElementById('agreeBtn');
+    const rectLeft = document.getElementById('rect-left');
+    const rectRight = document.getElementById('rect-right');
+    const svgLeft = document.getElementById('eye-left');
+    const svgRight = document.getElementById('eye-right');
 
-    let userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
+    const REF_EYE_WIDTH = 90;
+    const REF_EYE_HEIGHT = 90;
+    const REF_CORNER_RADIUS = 25;
+    const REF_X = 20;
+    const REF_Y = 45;
 
-    function showIntro() {
-      intro.style.display = 'flex';
-      content.style.display = 'none';
-      agreement.style.display = 'none';
-      workspace.style.display = 'none';
-      document.body.style.overflow = 'hidden';
+    let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+    let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+
+    function updateEye(rect, state) {
+      rect.setAttribute('x', state.x);
+      rect.setAttribute('y', state.y);
+      rect.setAttribute('width', state.width);
+      rect.setAttribute('height', state.height);
+      rect.setAttribute('rx', state.rx);
+      rect.setAttribute('ry', state.ry);
     }
 
-    function hideIntro() {
-      intro.style.display = 'none';
+    function resetEyes() {
+      leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+      rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+      updateEye(rectLeft, leftEyeState);
+      updateEye(rectRight, rightEyeState);
+      removeHearts();
+      rectLeft.style.display = '';
+      rectRight.style.display = '';
+      rectLeft.setAttribute('fill', '#4a6fff');
+      rectRight.setAttribute('fill', '#4a6fff');
+      rectLeft.setAttribute('filter', 'url(#glow)');
+      rectRight.setAttribute('filter', 'url(#glow)');
     }
 
-    function showAgreement() {
-      content.style.display = 'block';
-      agreement.style.display = 'flex';
-      workspace.style.display = 'none';
-      document.body.style.overflow = 'hidden';
+    async function blink() {
+      const steps = 6;
+      for(let i=0; i<steps; i++) {
+        leftEyeState.height -= REF_EYE_HEIGHT / steps;
+        rightEyeState.height -= REF_EYE_HEIGHT / steps;
+        leftEyeState.y += (REF_EYE_HEIGHT / steps) / 2;
+        rightEyeState.y += (REF_EYE_HEIGHT / steps) / 2;
+        leftEyeState.rx = Math.max(1, leftEyeState.height / 4);
+        leftEyeState.ry = leftEyeState.rx;
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.rx;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      for(let i=0; i<steps; i++) {
+        leftEyeState.height += REF_EYE_HEIGHT / steps;
+        rightEyeState.height += REF_EYE_HEIGHT / steps;
+        leftEyeState.y -= (REF_EYE_HEIGHT / steps) / 2;
+        rightEyeState.y -= (REF_EYE_HEIGHT / steps) / 2;
+        leftEyeState.rx = Math.min(REF_CORNER_RADIUS, leftEyeState.height / 4);
+        leftEyeState.ry = leftEyeState.rx;
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.rx;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
     }
 
-    function showWorkspace() {
-      content.style.display = 'none';
-      agreement.style.display = 'none';
-      workspace.style.display = 'flex';
-      document.body.style.overflow = 'auto';
+    async function moveEyes(dx, dy, steps=10, delay=40) {
+      for(let i=0; i<steps; i++) {
+        leftEyeState.x += dx / steps;
+        rightEyeState.x += dx / steps;
+        leftEyeState.y += dy / steps;
+        rightEyeState.y += dy / steps;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, delay));
+      }
+    }
+    async function moveEyesBack(dx, dy, steps=10, delay=40) {
+      for(let i=0; i<steps; i++) {
+        leftEyeState.x -= dx / steps;
+        rightEyeState.x -= dx / steps;
+        leftEyeState.y -= dy / steps;
+        rightEyeState.y -= dy / steps;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, delay));
+      }
+    }
+
+    // Hearts management with rarer appearance
+    let heartLeft = null;
+    let heartRight = null;
+    let loveExpressionCooldown = false;
+
+    function createHeart(svg) {
+      let heart = svg.querySelector('path.heart');
+      if(heart) heart.remove();
+      heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      heart.setAttribute('d', "M50 15 C35 0, 0 0, 0 37.5 C0 75, 50 90, 50 120 C50 90, 100 75, 100 37.5 C100 0, 65 0, 50 15 Z");
+      heart.setAttribute('fill', '#ff4d6d');
+      heart.setAttribute('filter', 'url(#glow)');
+      heart.classList.add('heart');
+      svg.appendChild(heart);
+      heart.style.transformOrigin = '50% 60%';
+      heart.style.transition = 'transform 0.3s ease';
+      return heart;
+    }
+
+    function removeHearts() {
+      if (heartLeft) {
+        heartLeft.remove();
+        heartLeft = null;
+      }
+      if (heartRight) {
+        heartRight.remove();
+        heartRight = null;
+      }
+    }
+
+    async function loveExpression() {
+      if (loveExpressionCooldown) return; // Prevent too frequent appearance
+      loveExpressionCooldown = true;
+
+      rectLeft.style.display = 'none';
+      rectRight.style.display = 'none';
+
+      heartLeft = createHeart(svgLeft);
+      heartRight = createHeart(svgRight);
+
+      const beatDuration = 700;
+      let growing = true;
+      let beats = 0;
+      const maxBeats = 6;
+
+      return new Promise((resolve) => {
+        function beat() {
+          if (beats >= maxBeats) {
+            removeHearts();
+            rectLeft.style.display = '';
+            rectRight.style.display = '';
+            resetEyes();
+            resolve();
+            setTimeout(() => { loveExpressionCooldown = false; }, 15000); // 15s cooldown
+            return;
+          }
+          if (growing) {
+            heartLeft.style.transform = 'scale(1.3)';
+            heartRight.style.transform = 'scale(1.3)';
+          } else {
+            heartLeft.style.transform = 'scale(1)';
+            heartRight.style.transform = 'scale(1)';
+            beats++;
+          }
+          growing = !growing;
+          setTimeout(beat, beatDuration);
+        }
+        beat();
+      });
+    }
+
+    async function happyExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.max(8, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(8, leftEyeState.ry - 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height -= 3;
+        rightEyeState.height -= 3;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r=>setTimeout(r, 900));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height += 3;
+        rightEyeState.height += 3;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
+
+    async function sadExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.min(35, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(35, leftEyeState.ry + 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height += 4;
+        rightEyeState.height += 4;
+        leftEyeState.y -= 1.5;
+        rightEyeState.y -= 1.5;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r=>setTimeout(r, 900));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.max(origLeft.rx, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(origLeft.ry, leftEyeState.ry - 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height -= 4;
+        rightEyeState.height -= 4;
+        leftEyeState.y += 1.5;
+        rightEyeState.y += 1.5;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
+
+    async function surprisedExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<10; i++) {
+        leftEyeState.width += 7;
+        rightEyeState.width += 7;
+        leftEyeState.height += 14;
+        rightEyeState.height += 14;
+        leftEyeState.rx = Math.max(1, leftEyeState.rx - 3);
+        leftEyeState.ry = Math.max(1, leftEyeState.ry - 3);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x -= 3.5;
+        rightEyeState.x -= 3.5;
+        leftEyeState.y -= 7;
+        rightEyeState.y -= 7;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r=>setTimeout(r, 1100));
+      for(let i=0; i<10; i++) {
+        leftEyeState.width -= 7;
+        rightEyeState.width -= 7;
+        leftEyeState.height -= 14;
+        rightEyeState.height -= 14;
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 3);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 3);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x += 3.5;
+        rightEyeState.x += 3.5;
+        leftEyeState.y += 7;
+        rightEyeState.y += 7;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
+
+    async function angryExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.max(1, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height -= 5;
+        rightEyeState.height -= 5;
+        leftEyeState.y += 4;
+        rightEyeState.y += 4;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r=>setTimeout(r, 1000));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height += 5;
+        rightEyeState.height += 5;
+        leftEyeState.y -= 4;
+        rightEyeState.y -= 4;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
+    
+    // New expression: Fear (боязнь) - eyes shrink vertically and move slightly up
+    async function fearExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<8; i++) {
+        leftEyeState.height -= 6;
+        rightEyeState.height -= 6;
+        leftEyeState.y -= 3;
+        rightEyeState.y -= 3;
+        leftEyeState.rx = Math.max(5, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(5, leftEyeState.ry - 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r => setTimeout(r, 900));
+      for(let i=0; i<8; i++) {
+        leftEyeState.height += 6;
+        rightEyeState.height += 6;
+        leftEyeState.y += 3;
+        rightEyeState.y += 3;
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
+
+    // New expression: Squint (прищуривание) - reduce width and increase rx/ry for sharper corners
+    async function squintExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<8; i++) {
+        leftEyeState.width -= 8;
+        rightEyeState.width -= 8;
+        leftEyeState.rx = Math.min(REF_CORNER_RADIUS + 15, leftEyeState.rx + 2);
+        leftEyeState.ry = Math.min(REF_CORNER_RADIUS + 15, leftEyeState.ry + 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x += 4;
+        rightEyeState.x += 4;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r => setTimeout(r, 900));
+      for(let i=0; i<8; i++) {
+        leftEyeState.width += 8;
+        rightEyeState.width += 8;
+        leftEyeState.rx = Math.max(REF_CORNER_RADIUS, leftEyeState.rx - 2);
+        leftEyeState.ry = Math.max(REF_CORNER_RADIUS, leftEyeState.ry - 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x -= 4;
+        rightEyeState.x -= 4;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
+
+    const expressions = [
+      happyExpression,
+      sadExpression,
+      surprisedExpression,
+      angryExpression,
+      loveExpression,
+      neutralExpression,
+      fearExpression,
+      squintExpression,
+    ];
+
+    function getRandomExpression() {
+      // Make loveExpression rarer by filtering it out mostly
+      let pool = expressions.filter(exp => exp !== loveExpression);
+      if (Math.random() < 0.1) { // 10% chance loveExpression included
+        pool.push(loveExpression);
+      }
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    async function neutralExpression() {
+      await new Promise(r => setTimeout(r, 1500));
+    }
+
+    async function eyeAnimationLoop() {
+      resetEyes();
+      while(true) {
+        const moves = [
+          [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
+        ];
+        const move = moves[Math.floor(Math.random() * moves.length)];
+        await moveEyes(move[0], move[1]);
+        await moveEyesBack(move[0], move[1]);
+
+        await blink();
+
+        const expr = getRandomExpression();
+        await expr();
+      }
+    }
+
+    function startEyeAnimation() {
+      eyeAnimationLoop();
     }
 
     window.addEventListener('load', () => {
-      showIntro();
-      setTimeout(() => {
-        hideIntro();
-        if (userAgreed) {
-          showWorkspace();
-        } else {
-          showAgreement();
-        }
-      }, 5000);
+      startEyeAnimation();
     });
-
-    agreeBtn.addEventListener('click', () => {
-      localStorage.setItem('qvantikUserAgreed', 'true');
-      userAgreed = true;
-      showWorkspace();
-    });
-
-    // Морфинг контура глаз для плавных выражений и направления взгляда
-    const shapeLeft = document.getElementById('shape-left');
-    const shapeRight = document.getElementById('shape-right');
-
-    const expressions = {
-      neutral: "M10,50 Q65,90 120,50 Q65,10 10,50 Z",
-      happy:   "M10,65 Q65,95 120,65 Q90,45 10,50 Z",
-      angry:   "M10,40 Q65,80 120,40 Q90,20 10,40 Z",
-      sad:     "M10,55 Q65,75 120,55 Q90,80 10,55 Z",
-      surprised:"M10,50 Q65,100 120,50 Q65,0 10,50 Z"
-    };
-
-    const lookOffsets = [
-      {x:0, y:0}, {x:-5, y:0}, {x:5, y:0}, {x:0, y:-5}, {x:0, y:5},
-      {x:-3, y:-3}, {x:3, y:-3}, {x:-3, y:3}, {x:3, y:3}
-    ];
-
-    function shiftPath(d, dx, dy) {
-      const parts = d.split(' ');
-      let result = [];
-      for(let part of parts) {
-        if(part === 'M' || part === 'Q' || part === 'Z') {
-          result.push(part);
-          continue;
-        }
-        const coords = part.split(',');
-        if(coords.length === 2) {
-          const x = parseFloat(coords[0]) + dx;
-          const y = parseFloat(coords[1]) + dy;
-          result.push(x.toFixed(2)+','+y.toFixed(2));
-        } else {
-          result.push(part);
-        }
-      }
-      return result.join(' ');
-    }
-
-    function parsePath(d) {
-      const coords = d.match(/-?[\d.]+,-?[\d.]+/g);
-      if (!coords) return [];
-      return coords.map(c => c.split(',').map(Number));
-    }
-
-    function buildPath(points) {
-      return `M${points[0][0]},${points[0][1]} Q${points[1][0]},${points[1][1]} ${points[2][0]},${points[2][1]} Q${points[3][0]},${points[3][1]} ${points[4][0]},${points[4][1]} Z`;
-    }
-
-    function interpolatePoints(p1, p2, t) {
-      return p1.map((pt,i) => [pt[0] + (p2[i][0]-pt[0])*t, pt[1] + (p2[i][1]-pt[1])*t]);
-    }
-
-    function morphPath(el, fromD, toD, duration) {
-      const fromPoints = parsePath(fromD);
-      const toPoints = parsePath(toD);
-      if(fromPoints.length !== toPoints.length) {
-        el.setAttribute('d', toD);
-        return;
-      }
-      let start = null;
-      function animate(ts) {
-        if(!start) start = ts;
-        let progress = Math.min((ts - start)/duration, 1);
-        const points = interpolatePoints(fromPoints, toPoints, progress);
-        el.setAttribute('d', buildPath(points));
-        if(progress < 1) requestAnimationFrame(animate);
-      }
-      requestAnimationFrame(animate);
-    }
-
-    let currentExprLeft = 'neutral';
-    let currentExprRight = 'neutral';
-    let currentLookLeft = {x:0,y:0};
-    let currentLookRight = {x:0,y:0};
-
-    function setInitial() {
-      shapeLeft.setAttribute('d', shiftPath(expressions[currentExprLeft], currentLookLeft.x, currentLookLeft.y));
-      shapeRight.setAttribute('d', shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y));
-    }
-
-    setInitial();
-
-    function changeExpression() {
-      const newExprLeft = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
-      const newLookLeft = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
-      const newDLeft = shiftPath(expressions[newExprLeft], newLookLeft.x, newLookLeft.y);
-      const currentDLeft = shiftPath(expressions[currentExprLeft], currentLookLeft.x, currentLookLeft.y);
-
-      const newExprRight = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
-      const newLookRight = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
-      const newDRight = shiftPath(expressions[newExprRight], newLookRight.x, newLookRight.y);
-      const currentDRight = shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y);
-
-      morphPath(shapeLeft, currentDLeft, newDLeft, 1600);
-      morphPath(shapeRight, currentDRight, newDRight, 1600);
-
-      currentExprLeft = newExprLeft;
-      currentLookLeft = newLookLeft;
-      currentExprRight = newExprRight;
-      currentLookRight = newLookRight;
-    }
-
-    setInterval(() => {
-      changeExpression();
-    }, 3500 + Math.random()*1500);
-
   </script>
 </body>
 </html>
