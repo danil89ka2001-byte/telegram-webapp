@@ -50,31 +50,74 @@
     /* Intro styles */
     #intro {
       display: none;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       background: linear-gradient(135deg, #6e45e2, #88d3ce);
-      flex-direction: column;
       text-align: center;
       opacity: 1;
       transition: opacity 1s ease;
       font-family: 'Montserrat', sans-serif;
       font-weight: 700;
       text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #intro.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     #intro h1 {
       font-size: 3.5rem;
       letter-spacing: 0.15em;
-      margin: 0;
+      margin: 1rem 0 0 0;
       text-shadow: 0 0 20px #88d3ce, 0 0 40px #6e45e2;
+      z-index: 10;
+      position: relative;
     }
 
     #intro p {
-      margin-top: 1rem;
+      margin: 1rem 0 0 0;
       font-size: 1.25rem;
       color: #d0f0f0;
       text-shadow: 0 0 10px #88d3ce;
+      z-index: 10;
+      position: relative;
+    }
+
+    /* Intro image styles */
+    #introImage {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 15px rgba(74, 222, 128, 0.7));
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeInBlur 2s ease forwards;
+      transition: opacity 1s ease;
+      box-shadow:
+        0 0 20px rgba(74, 222, 128, 0.5),
+        0 0 40px rgba(74, 222, 128, 0.3),
+        0 0 60px rgba(74, 222, 128, 0.2);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(74, 222, 128, 0.5);
+      z-index: 9;
+      position: relative;
+    }
+
+    @keyframes fadeInBlur {
+      0% {
+        opacity: 0;
+        filter: blur(10px) drop-shadow(0 0 15px rgba(74, 222, 128, 0));
+      }
+      100% {
+        opacity: 1;
+        filter: blur(0) drop-shadow(0 0 15px rgba(74, 222, 128, 0.7));
+      }
     }
 
     /* Content styles */
@@ -280,24 +323,25 @@
   </style>
 </head>
 <body>
-  <div id="intro" style="display:none; flex-direction: column; align-items: center; justify-content: center;">
+  <div id="intro">
+    <img id="introImage" src="https://i.fastpic.org/126/2025/1101/74aeb460d345cb8a106318fec6a40a66.jpg" alt="QVANTIK Logo" />
     <h1>QVANTIK</h1>
     <p>Искусственный интеллект</p>
   </div>
 
-  <div id="content" style="display:none;">
+  <div id="content">
     <h2>Добро пожаловать в QVANTIK</h2>
     <p>QVANTIK — это <span class="highlight">искусственный интеллект</span>, созданный для развлечения и розыгрышей. Он умеет удивлять, развлекать и создавать уникальные интерактивные сценарии, которые подарят вам море позитива и неожиданных эмоций.</p>
     <p>Наша нейросеть сочетает в себе передовые технологии и творческий подход, чтобы сделать общение с ней максимально увлекательным и легким. Попробуйте, и вы убедитесь, что искусственный интеллект может быть не только полезным, но и очень веселым!</p>
     <footer>© 2024 QVANTIK AI | Все права защищены</footer>
   </div>
 
-  <div id="agreement" style="display:none;">
+  <div id="agreement">
     <p>Пожалуйста, ознакомьтесь и примите <a id="userAgreementLink">Пользовательское соглашение</a> для продолжения.</p>
     <button id="agreeBtn">Согласен</button>
   </div>
 
-  <div id="workspace" style="display:none;">
+  <div id="workspace">
     <h2>Рабочее место QVANTIK</h2>
     <p>Здесь начинается ваше интерактивное путешествие с нашей нейросетью. Введите что-нибудь в поле ниже и нажмите "Развеселить меня!" — QVANTIK ответит вам шуткой или интересным фактом!</p>
     <div id="fun-area">
@@ -376,7 +420,7 @@
       showWorkspace();
     });
 
-    // Функционал "Развеселить меня!"
+    // "Развеселить меня!" функционал
     const funResponses = [
       'Почему нейросети не берут отпуск? Они всегда в режиме обучения!',
       'Знаете, что говорит ИИ, когда устает? "Дайте мне пару байтов!"',
