@@ -240,8 +240,6 @@
     </div>
   </div>
 
-  <!-- Modal and other content unchanged -->
-
   <script>
     const intro = document.getElementById('intro');
     const content = document.getElementById('content');
@@ -288,6 +286,7 @@
         hideIntro();
         if (userAgreed) {
           showWorkspace();
+          startEyeAnimation();
         } else {
           showAgreement();
         }
@@ -298,6 +297,7 @@
       localStorage.setItem('qvantikUserAgreed', 'true');
       userAgreed = true;
       showWorkspace();
+      startEyeAnimation();
     });
 
     // Морфинг контура глаз для плавных выражений и направления взгляда
@@ -379,8 +379,6 @@
       shapeRight.setAttribute('d', shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y));
     }
 
-    setInitial();
-
     function changeExpression() {
       const newExprLeft = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
       const newLookLeft = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
@@ -401,10 +399,13 @@
       currentLookRight = newLookRight;
     }
 
-    setInterval(() => {
+    function startEyeAnimation() {
+      setInitial();
       changeExpression();
-    }, 3500 + Math.random()*1500);
-
+      setInterval(() => {
+        changeExpression();
+      }, 3500 + Math.random()*1500);
+    }
   </script>
 </body>
 </html>
