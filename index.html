@@ -212,6 +212,14 @@
     </div>
   </div>
 
+  <!-- Audio elements for expressions -->
+  <audio id="audio-happy" src="https://actions.google.com/sounds/v1/animals/cat_meow.ogg" preload="auto"></audio>
+  <audio id="audio-sad" src="https://actions.google.com/sounds/v1/animals/dog_whine.ogg" preload="auto"></audio>
+  <audio id="audio-surprised" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+  <audio id="audio-angry" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg" preload="auto"></audio>
+  <audio id="audio-love" src="https://actions.google.com/sounds/v1/cartoon/heartbeat.ogg" preload="auto"></audio>
+  <audio id="audio-neutral" src="" preload="auto"></audio>
+
   <!-- Modal for User Agreement -->
   <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
     <div id="modalContent">
@@ -371,7 +379,30 @@
       }
     }
 
+    // Audio elements references
+    const audioMap = {
+      happy: document.getElementById('audio-happy'),
+      sad: document.getElementById('audio-sad'),
+      surprised: document.getElementById('audio-surprised'),
+      angry: document.getElementById('audio-angry'),
+      love: document.getElementById('audio-love'),
+      neutral: document.getElementById('audio-neutral'),
+    };
+
+    function playAudioFor(expressionName) {
+      // Stop all audios first
+      Object.values(audioMap).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      const audio = audioMap[expressionName];
+      if (audio) {
+        audio.play().catch(() => { /* ignore play errors */ });
+      }
+    }
+
     async function happyExpression() {
+      playAudioFor('happy');
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
@@ -401,6 +432,7 @@
     }
 
     async function sadExpression() {
+      playAudioFor('sad');
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
@@ -434,6 +466,7 @@
     }
 
     async function surprisedExpression() {
+      playAudioFor('surprised');
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
@@ -475,6 +508,7 @@
     }
 
     async function angryExpression() {
+      playAudioFor('angry');
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
@@ -538,6 +572,7 @@
     }
 
     async function loveExpression() {
+      playAudioFor('love');
       // Hide eye rects
       rectLeft.style.display = 'none';
       rectRight.style.display = 'none';
@@ -576,6 +611,7 @@
     }
 
     async function neutralExpression() {
+      playAudioFor('neutral');
       await new Promise(r => setTimeout(r, 1500));
     }
 
