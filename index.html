@@ -48,8 +48,8 @@
     }
 
     /* Intro styles */
-    .intro {
-      display: flex;
+    #intro {
+      display: none;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -58,22 +58,19 @@
       text-align: center;
       opacity: 1;
       transition: opacity 1s ease;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
-    .intro.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .intro h1 {
+    #intro h1 {
       font-size: 3.5rem;
       letter-spacing: 0.15em;
       margin: 0;
-      text-transform: uppercase;
       text-shadow: 0 0 20px #88d3ce, 0 0 40px #6e45e2;
     }
 
-    .intro p {
+    #intro p {
       margin-top: 1rem;
       font-size: 1.25rem;
       color: #d0f0f0;
@@ -81,7 +78,7 @@
     }
 
     /* Content styles */
-    .content {
+    #content {
       display: none;
       height: 100vh;
       background: radial-gradient(circle at center, #1a1d2e 0%, #0d0f1a 80%);
@@ -90,26 +87,17 @@
       overflow-y: auto;
       text-align: center;
       position: relative;
+      font-family: 'Montserrat', sans-serif;
     }
 
-    .content.active {
-      display: block;
-      animation: fadeInContent 1.5s ease forwards;
-    }
-
-    @keyframes fadeInContent {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .content h2 {
+    #content h2 {
       font-size: 2.8rem;
       margin-bottom: 1rem;
       color: #73d2de;
       text-shadow: 0 0 15px #73d2de;
     }
 
-    .content p {
+    #content p {
       font-size: 1.25rem;
       max-width: 700px;
       margin: 0 auto 2rem;
@@ -139,12 +127,13 @@
       box-shadow: 0 -4px 15px rgba(0,0,0,0.7);
       color: #cdeffd;
       padding: 1.2rem 2rem;
-      display: flex;
+      display: none;
       justify-content: space-between;
       align-items: center;
       font-size: 1rem;
       z-index: 1000;
       backdrop-filter: blur(8px);
+      font-family: 'Montserrat', sans-serif;
     }
 
     #agreement p {
@@ -163,6 +152,7 @@
       overflow-y: auto;
       text-align: center;
       flex-direction: column;
+      font-family: 'Montserrat', sans-serif;
     }
     #workspace.active {
       display: flex;
@@ -263,15 +253,7 @@
       line-height: 1.5;
       position: relative;
       white-space: pre-wrap;
-    }
-
-    #modalTitle {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: #4ade80;
-      text-align: center;
-      font-weight: 700;
-      text-shadow: 0 0 10px #4ade80;
+      font-family: 'Montserrat', sans-serif;
     }
 
     #modalCloseBtn {
@@ -298,12 +280,12 @@
   </style>
 </head>
 <body>
-  <div class="intro" id="intro">
+  <div id="intro" style="display:none; flex-direction: column; align-items: center; justify-content: center;">
     <h1>QVANTIK</h1>
     <p>Искусственный интеллект</p>
   </div>
 
-  <div class="content" id="content">
+  <div id="content" style="display:none;">
     <h2>Добро пожаловать в QVANTIK</h2>
     <p>QVANTIK — это <span class="highlight">искусственный интеллект</span>, созданный для развлечения и розыгрышей. Он умеет удивлять, развлекать и создавать уникальные интерактивные сценарии, которые подарят вам море позитива и неожиданных эмоций.</p>
     <p>Наша нейросеть сочетает в себе передовые технологии и творческий подход, чтобы сделать общение с ней максимально увлекательным и легким. Попробуйте, и вы убедитесь, что искусственный интеллект может быть не только полезным, но и очень веселым!</p>
@@ -315,7 +297,7 @@
     <button id="agreeBtn">Согласен</button>
   </div>
 
-  <div id="workspace">
+  <div id="workspace" style="display:none;">
     <h2>Рабочее место QVANTIK</h2>
     <p>Здесь начинается ваше интерактивное путешествие с нашей нейросетью. Введите что-нибудь в поле ниже и нажмите "Развеселить меня!" — QVANTIK ответит вам шуткой или интересным фактом!</p>
     <div id="fun-area">
@@ -344,70 +326,57 @@
     const response = document.getElementById('response');
 
     const modalOverlay = document.getElementById('modalOverlay');
-    const modalContent = document.getElementById('modalContent');
     const modalText = document.getElementById('modalText');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
     const userAgreementLink = document.getElementById('userAgreementLink');
 
-    // Проверка, согласился ли пользователь ранее
     let userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
 
     function showIntro() {
-      intro.classList.remove('hidden');
       intro.style.display = 'flex';
       content.style.display = 'none';
       agreement.style.display = 'none';
-      workspace.classList.remove('active');
+      workspace.style.display = 'none';
       document.body.style.overflow = 'hidden';
     }
 
     function hideIntro() {
-      intro.classList.add('hidden');
-      setTimeout(() => {
-        intro.style.display = 'none';
-      }, 1000); // равен transition time
+      intro.style.display = 'none';
     }
 
-    function showContentAndAgreement() {
-      content.classList.add('active');
+    function showAgreement() {
       content.style.display = 'block';
       agreement.style.display = 'flex';
-      workspace.classList.remove('active');
+      workspace.style.display = 'none';
       document.body.style.overflow = 'hidden';
     }
 
     function showWorkspace() {
       content.style.display = 'none';
       agreement.style.display = 'none';
-      workspace.classList.add('active');
+      workspace.style.display = 'flex';
       document.body.style.overflow = 'auto';
     }
 
-    function startAppFlow() {
+    window.addEventListener('load', () => {
       showIntro();
       setTimeout(() => {
         hideIntro();
         if (userAgreed) {
           showWorkspace();
         } else {
-          showContentAndAgreement();
+          showAgreement();
         }
       }, 5000);
-    }
-
-    window.addEventListener('load', () => {
-      startAppFlow();
     });
 
     agreeBtn.addEventListener('click', () => {
       localStorage.setItem('qvantikUserAgreed', 'true');
       userAgreed = true;
-      content.style.display = 'none';
-      agreement.style.display = 'none';
       showWorkspace();
     });
 
-    // Примитивный "фан" функционал с рандомным ответом
+    // Функционал "Развеселить меня!"
     const funResponses = [
       'Почему нейросети не берут отпуск? Они всегда в режиме обучения!',
       'Знаете, что говорит ИИ, когда устает? "Дайте мне пару байтов!"',
@@ -434,7 +403,7 @@
       userInput.focus();
     });
 
-    // Пользовательское соглашение текст
+    // Текст пользовательского соглашения
     const userAgreementText = `Пользовательское соглашение
 
 Настоящее Пользовательское соглашение (актуальная редакция соглашения, опубликованная по ссылке (https://danil89ka2001-byte.github.io/telegram-webapp/) является публичной офертой и определяет условия использования веб-сайта Qvantik доступного по ссылке (https://danil89ka2001-byte.github.io/telegram-webapp/) (далее — Сайт), любыми пользователями сети Интернет, просматривающими Сайт (далее — Пользователи Сайта).
@@ -478,7 +447,6 @@
 4.3. Администрация Сайта вправе в любое время в одностороннем порядке изменять условия настоящего Пользовательского соглашения. Такие изменения вступают в силу с момента размещения новой версии Пользовательского соглашения на сайте. При несогласии Пользователя с внесенными изменениями он обязан покинуть Сайт, прекратить использование материалов и сервисов Сайта.
 `;
 
-    // Show modal with user agreement text
     function openUserAgreementModal() {
       modalText.textContent = userAgreementText;
       modalOverlay.classList.add('active');
@@ -486,10 +454,9 @@
       document.body.style.overflow = 'hidden';
     }
 
-    // Close modal and return to agreement prompt
     function closeUserAgreementModal() {
       modalOverlay.classList.remove('active');
-      document.body.style.overflow = 'hidden'; // keep scroll hidden because still on agreement
+      document.body.style.overflow = 'hidden'; // since agreement still visible
       agreeBtn.focus();
     }
 
@@ -502,14 +469,12 @@
       closeUserAgreementModal();
     });
 
-    // Close modal on overlay click
     modalOverlay.addEventListener('click', (e) => {
       if (e.target === modalOverlay) {
         closeUserAgreementModal();
       }
     });
 
-    // Handle ESC key to close modal
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
         closeUserAgreementModal();
