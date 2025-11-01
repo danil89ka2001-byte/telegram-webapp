@@ -362,6 +362,7 @@
       }
     }
 
+    // Разные выражения глаз
     async function happyExpression() {
       const origStateLeft = {...leftEyeState};
       const origStateRight = {...rightEyeState};
@@ -392,6 +393,121 @@
       resetEyes();
     }
 
+    async function sadExpression() {
+      const origStateLeft = {...leftEyeState};
+      const origStateRight = {...rightEyeState};
+
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.min(30, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(30, leftEyeState.ry + 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height += 3;
+        rightEyeState.height += 3;
+        leftEyeState.y -= 1;  // Поднять глаза чуть выше
+        rightEyeState.y -= 1;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      await new Promise(r => setTimeout(r, 800));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.max(origStateLeft.rx, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(origStateLeft.ry, leftEyeState.ry - 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height -= 3;
+        rightEyeState.height -= 3;
+        leftEyeState.y += 1;
+        rightEyeState.y += 1;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      resetEyes();
+    }
+
+    async function surprisedExpression() {
+      const origStateLeft = {...leftEyeState};
+      const origStateRight = {...rightEyeState};
+
+      for(let i=0; i<10; i++) {
+        leftEyeState.width += 5;
+        rightEyeState.width += 5;
+        leftEyeState.height += 10;
+        rightEyeState.height += 10;
+        leftEyeState.rx = Math.max(1, leftEyeState.rx - 2);
+        leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x -= 2.5;
+        rightEyeState.x -= 2.5;
+        leftEyeState.y -= 5;
+        rightEyeState.y -= 5;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      await new Promise(r => setTimeout(r, 1000));
+      for(let i=0; i<10; i++) {
+        leftEyeState.width -= 5;
+        rightEyeState.width -= 5;
+        leftEyeState.height -= 10;
+        rightEyeState.height -= 10;
+        leftEyeState.rx = Math.min(origStateLeft.rx, leftEyeState.rx + 2);
+        leftEyeState.ry = Math.min(origStateLeft.ry, leftEyeState.ry + 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x += 2.5;
+        rightEyeState.x += 2.5;
+        leftEyeState.y += 5;
+        rightEyeState.y += 5;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      resetEyes();
+    }
+
+    async function angryExpression() {
+      const origStateLeft = {...leftEyeState};
+      const origStateRight = {...rightEyeState};
+
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.max(1, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height -= 4;
+        rightEyeState.height -= 4;
+        leftEyeState.y += 3;
+        rightEyeState.y += 3;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      await new Promise(r => setTimeout(r, 900));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.min(origStateLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origStateLeft.ry, leftEyeState.ry + 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height += 4;
+        rightEyeState.height += 4;
+        leftEyeState.y -= 3;
+        rightEyeState.y -= 3;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      resetEyes();
+    }
+
+    async function neutralExpression() {
+      await new Promise(r => setTimeout(r, 1500));
+    }
+
+    // Полный цикл эмоций
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
@@ -399,19 +515,30 @@
         await moveEyesBack(10, 0);
         await blink();
         await happyExpression();
+
         await moveEyes(0, -10);
         await moveEyesBack(0, -10);
         await blink();
-        await new Promise(r => setTimeout(r, 1500));
+        await sadExpression();
+
+        await moveEyes(10, 10);
+        await moveEyesBack(10, 10);
+        await blink();
+        await surprisedExpression();
+
+        await moveEyes(-10, 0);
+        await moveEyesBack(-10, 0);
+        await blink();
+        await angryExpression();
+
+        await neutralExpression();
       }
     }
 
     function startEyeAnimation() {
       eyeAnimationLoop();
     }
-  </script>
 
-  <script>
     // User Agreement modal text and handlers (unchanged)
     const userAgreementText = `Пользовательское соглашение
 
