@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>QVANTIK - Телеграм Миниприложение</title>
+  <title>QVANTIK - Искусственный интеллект</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
@@ -19,20 +19,152 @@
       background: #0d0f1a;
       color: #f0f0f5;
       overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #4ade80;
+      color: #0d0f1a;
+      box-shadow: 0 4px 15px rgba(74, 222, 128, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    button:hover {
+      background: #38b764;
+      box-shadow: 0 6px 20px rgba(56, 183, 100, 0.7);
+    }
+
+    a {
+      color: #4ade80;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    a:hover {
+      color: #38b764;
+    }
+
+    /* Intro styles */
+    #intro {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6e45e2, #88d3ce);
+      text-align: center;
+      opacity: 1;
+      transition: opacity 1s ease;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #intro.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #intro h1 {
+      font-size: 3.5rem;
+      letter-spacing: 0.15em;
+      margin: 1rem 0 0 0;
+      text-shadow: 0 0 20px #88d3ce, 0 0 40px #6e45e2;
+      z-index: 10;
+      position: relative;
+    }
+
+    #intro p {
+      margin: 1rem 0 0 0;
+      font-size: 1.25rem;
+      color: #d0f0f0;
+      text-shadow: 0 0 10px #88d3ce;
+      z-index: 10;
+      position: relative;
+    }
+
+    /* Content styles */
+    #content {
+      display: none;
+      height: 100vh;
+      background: radial-gradient(circle at center, #1a1d2e 0%, #0d0f1a 80%);
+      color: #cdeffd;
+      padding: 3rem 2rem 6rem;
+      overflow-y: auto;
+      text-align: center;
+      position: relative;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #content h2 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #73d2de;
+      text-shadow: 0 0 15px #73d2de;
+    }
+
+    #content p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+      color: #a9d6e5;
+    }
+
+    .highlight {
+      color: #4ade80;
+      font-weight: 700;
+      text-shadow: 0 0 10px #4ade80;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #666e7a;
+    }
+
+    /* Agreement modal at bottom */
+    #agreement {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #222a3a;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.7);
+      color: #cdeffd;
+      padding: 1.2rem 2rem;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #agreement p {
+      margin: 0;
+      max-width: 80%;
+      line-height: 1.3;
+    }
+
+    /* Workspace styles */
     #workspace {
-      background: #0d0f1a;
+      display: none;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a152a, #1d2a47);
       color: #e0f7fa;
       font-family: 'Montserrat', sans-serif;
-      display: flex;
       justify-content: center;
       align-items: center;
+      display: flex;
       user-select: none;
-      padding-left: 20px; /* немного левее, уменьшено */
+      padding-left: 20px;
     }
 
     /* Container for the eyes centered with adjusted size and enough right padding */
@@ -71,6 +203,23 @@
   </style>
 </head>
 <body>
+  <div id="intro">
+    <h1>QVANTIK</h1>
+    <p>Искусственный интеллект</p>
+  </div>
+
+  <div id="content">
+    <h2>Добро пожаловать в QVANTIK</h2>
+    <p>QVANTIK — это <span class="highlight">искусственный интеллект</span>, созданный для развлечения и розыгрышей. Он умеет удивлять, развлекать и создавать уникальные интерактивные сценарии, которые подарят вам море позитива и неожиданных эмоций.</p>
+    <p>Наша нейросеть сочетает в себе передовые технологии и творческий подход, чтобы сделать общение с ней максимально увлекательным и легким. Попробуйте, и вы убедитесь, что искусственный интеллект может быть не только полезным, но и очень веселым!</p>
+    <footer>© 2024 QVANTIK AI | Все права защищены</footer>
+  </div>
+
+  <div id="agreement">
+    <p>Пожалуйста, ознакомьтесь и примите <a id="userAgreementLink">Пользовательское соглашение</a> для продолжения.</p>
+    <button id="agreeBtn">Согласен</button>
+  </div>
+
   <div id="workspace" role="main" aria-label="Рабочее место QVANTIK миниприложения Телеграм">
     <div class="eyes-container" aria-label="Цифровые глаза робота Cozmo" role="img">
       <svg id="eye-left" class="eye-svg" viewBox="0 0 180 180" aria-label="Левый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
@@ -93,6 +242,60 @@
   </div>
 
   <script>
+    const intro = document.getElementById('intro');
+    const content = document.getElementById('content');
+    const agreement = document.getElementById('agreement');
+    const workspace = document.getElementById('workspace');
+    const agreeBtn = document.getElementById('agreeBtn');
+
+    let userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
+
+    function showIntro() {
+      intro.style.display = 'flex';
+      content.style.display = 'none';
+      agreement.style.display = 'none';
+      workspace.style.display = 'none';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideIntro() {
+      intro.style.display = 'none';
+    }
+
+    function showAgreement() {
+      content.style.display = 'block';
+      agreement.style.display = 'flex';
+      workspace.style.display = 'none';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showWorkspace() {
+      content.style.display = 'none';
+      agreement.style.display = 'none';
+      workspace.style.display = 'flex';
+      document.body.style.overflow = 'auto';
+    }
+
+    window.addEventListener('load', () => {
+      showIntro();
+      setTimeout(() => {
+        hideIntro();
+        if (userAgreed) {
+          showWorkspace();
+        } else {
+          showAgreement();
+        }
+      }, 5000);
+    });
+
+    agreeBtn.addEventListener('click', () => {
+      localStorage.setItem('qvantikUserAgreed', 'true');
+      userAgreed = true;
+      showWorkspace();
+    });
+
+    // Глаза анимация
+
     const rectLeft = document.getElementById('rect-left');
     const rectRight = document.getElementById('rect-right');
     const svgLeft = document.getElementById('eye-left');
@@ -143,7 +346,7 @@
         rightEyeState.ry = leftEyeState.rx;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise(r => setTimeout(r, 30));
       }
       for(let i=0; i<steps; i++) {
         leftEyeState.height += REF_EYE_HEIGHT / steps;
@@ -156,7 +359,7 @@
         rightEyeState.ry = leftEyeState.rx;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise(r => setTimeout(r, 30));
       }
       resetEyes();
     }
@@ -391,7 +594,6 @@
       resetEyes();
     }
     
-    // New expression: Fear (боязнь) - eyes shrink vertically and move slightly up
     async function fearExpression() {
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
@@ -425,7 +627,6 @@
       resetEyes();
     }
 
-    // New expression: Squint (прищуривание) - reduce width and increase rx/ry for sharper corners
     async function squintExpression() {
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
@@ -471,23 +672,23 @@
     ];
 
     function getRandomExpression() {
-      // Make loveExpression rarer by filtering it out mostly
       let pool = expressions.filter(exp => exp !== loveExpression);
-      if (Math.random() < 0.1) { // 10% chance loveExpression included
+      if (Math.random() < 0.1) {
         pool.push(loveExpression);
       }
       return pool[Math.floor(Math.random() * pool.length)];
     }
 
     async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 2000)); // увеличенный промежуток между эмоциями
     }
 
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
+        // Добавлены отрицательные смещения по оси X для взгляда влево
         const moves = [
-          [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
+          [10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
         const move = moves[Math.floor(Math.random() * moves.length)];
         await moveEyes(move[0], move[1]);
