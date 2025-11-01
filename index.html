@@ -32,17 +32,17 @@
       justify-content: center;
       align-items: center;
       user-select: none;
-      padding-left: 20px; /* немного левее, уменьшено */
+      padding-left: 20px;
     }
 
     /* Container for the eyes centered with adjusted size and enough right padding */
     .eyes-container {
       display: flex;
-      gap: 50px; /* расстояние между глазами */
-      width: 350px; /* увеличена ширина, чтобы правый глаз не обрезался */
+      gap: 50px;
+      width: 350px;
       height: 160px;
       position: relative;
-      padding-right: 20px; /* дополнительный отступ справа */
+      padding-right: 20px;
     }
 
     svg.eye-svg {
@@ -50,12 +50,12 @@
       height: 140px;
       overflow: visible;
       box-sizing: content-box;
-      padding: 12px; /* увеличен padding чтобы границы не заходили */
+      padding: 12px;
     }
 
     rect.eye-rect {
       fill: #4a6fff;
-      rx: 25;  /* радиус скругления */
+      rx: 25;
       ry: 25;
       filter: url(#glow);
       transition: all 0.2s ease;
@@ -143,7 +143,7 @@
         rightEyeState.ry = leftEyeState.rx;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise(r => setTimeout(r, 30));
       }
       for(let i=0; i<steps; i++) {
         leftEyeState.height += REF_EYE_HEIGHT / steps;
@@ -156,7 +156,7 @@
         rightEyeState.ry = leftEyeState.rx;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise(r => setTimeout(r, 30));
       }
       resetEyes();
     }
@@ -391,7 +391,6 @@
       resetEyes();
     }
     
-    // New expression: Fear (боязнь) - eyes shrink vertically and move slightly up
     async function fearExpression() {
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
@@ -425,7 +424,6 @@
       resetEyes();
     }
 
-    // New expression: Squint (прищуривание) - reduce width and increase rx/ry for sharper corners
     async function squintExpression() {
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
@@ -471,30 +469,32 @@
     ];
 
     function getRandomExpression() {
-      // Make loveExpression rarer by filtering it out mostly
       let pool = expressions.filter(exp => exp !== loveExpression);
-      if (Math.random() < 0.1) { // 10% chance loveExpression included
+      if (Math.random() < 0.1) {
         pool.push(loveExpression);
       }
       return pool[Math.floor(Math.random() * pool.length)];
     }
 
     async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 2000)); // increased wait time between expressions
     }
 
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
+        // Eyes can look left or right (and other directions) randomly
         const moves = [
-          [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
+          [10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
         const move = moves[Math.floor(Math.random() * moves.length)];
         await moveEyes(move[0], move[1]);
         await moveEyesBack(move[0], move[1]);
 
+        // More frequent blinking
         await blink();
 
+        // Longer delay before next expression
         const expr = getRandomExpression();
         await expr();
       }
