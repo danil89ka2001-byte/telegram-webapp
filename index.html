@@ -1,65 +1,87 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Генерация видео LongCat-Video</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Простая 2D игра на Canvas</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  canvas {
+    background: #eee;
+    display: block;
+    border: 2px solid #333;
+  }
+</style>
 </head>
 <body>
-  <h1>Генерация видео из текста и изображения</h1>
-  <form id="videoForm">
-    <label>
-      Текст (prompt):<br />
-      <input type="text" name="prompt" required />
-    </label>
-    <br /><br />
-    <label>
-      Изображение (опционально):<br />
-      <input type="file" name="image" accept="image/*" />
-    </label>
-    <br /><br />
-    <button type="submit">Сгенерировать видео</button>
-  </form>
+<canvas id="game" width="600" height="400"></canvas>
+<script>
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
 
-  <h2>Результат:</h2>
-  <video id="resultVideo" controls style="max-width: 100%; display: none;"></video>
+  const player = {
+    x: 50,
+    y: 180,
+    width: 40,
+    height: 40,
+    color: 'blue',
+    speed: 4,
+    dx: 0,
+    dy: 0
+  };
 
-  <script>
-    const form = document.getElementById('videoForm');
-    const video = document.getElementById('resultVideo');
+  const keys = {};
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  // Обработка нажатий клавиш
+  window.addEventListener('keydown', e => {
+    keys[e.key] = true;
+  });
+  window.addEventListener('keyup', e => {
+    keys[e.key] = false;
+  });
 
-      const formData = new FormData(form);
+  function update() {
+    // Сброс движения
+    player.dx = 0;
+    player.dy = 0;
 
-      video.style.display = 'none';
-      video.src = '';
+    if (keys['ArrowRight'] || keys['d']) player.dx = player.speed;
+    if (keys['ArrowLeft'] || keys['a']) player.dx = -player.speed;
+    if (keys['ArrowUp'] || keys['w']) player.dy = -player.speed;
+    if (keys['ArrowDown'] || keys['s']) player.dy = player.speed;
 
-      try {
-        const response = await fetch('http://localhost:3000/generate-video', {
-          method: 'POST',
-          body: formData,
-        });
+    // Обновление позиции с проверкой границ
+    player.x += player.dx;
+    player.y += player.dy;
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          alert('Ошибка сервера: ' + errorText);
-          return;
-        }
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+    if (player.y < 0) player.y = 0;
+    if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+  }
 
-        const data = await response.json();
-        if (data.video_url) {
-          video.src = data.video_url;
-          video.style.display = 'block';
-          video.play();
-        } else {
-          alert('Видео не было сгенерировано.');
-        }
-      } catch (err) {
-        alert('Ошибка: ' + err.message);
-      }
-    });
-  </script>
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Рисуем игрока
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+  }
+
+  function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+</script>
 </body>
 </html>
