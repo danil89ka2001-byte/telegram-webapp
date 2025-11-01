@@ -212,12 +212,12 @@
     </div>
   </div>
 
-  <!-- Audio elements for expressions -->
-  <audio id="audio-happy" src="https://actions.google.com/sounds/v1/animals/cat_meow.ogg" preload="auto"></audio>
-  <audio id="audio-sad" src="https://actions.google.com/sounds/v1/animals/dog_whine.ogg" preload="auto"></audio>
-  <audio id="audio-surprised" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
-  <audio id="audio-angry" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg" preload="auto"></audio>
-  <audio id="audio-love" src="https://actions.google.com/sounds/v1/cartoon/heartbeat.ogg" preload="auto"></audio>
+  <!-- Audio elements for expressions with high-quality free sounds -->
+  <audio id="audio-happy" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1b125b8c7e.mp3?filename=joyful-bells-124959.mp3" preload="auto"></audio>
+  <audio id="audio-sad" src="https://cdn.pixabay.com/download/audio/2021/07/19/audio_6e5e7b7b6c.mp3?filename=sad-piano-11028.mp3" preload="auto"></audio>
+  <audio id="audio-surprised" src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_b6a6a2d2a5.mp3?filename=cartoon-surprise-7293.mp3" preload="auto"></audio>
+  <audio id="audio-angry" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_e8b0e3d0e5.mp3?filename=angry-hit-124974.mp3" preload="auto"></audio>
+  <audio id="audio-love" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9f5b3d7b15.mp3?filename=romantic-harp-124962.mp3" preload="auto"></audio>
   <audio id="audio-neutral" src="" preload="auto"></audio>
 
   <!-- Modal for User Agreement -->
@@ -386,14 +386,16 @@
       surprised: document.getElementById('audio-surprised'),
       angry: document.getElementById('audio-angry'),
       love: document.getElementById('audio-love'),
-      neutral: document.getElementById('audio-neutral'),
+      neutral: null,
     };
 
     function playAudioFor(expressionName) {
       // Stop all audios first
       Object.values(audioMap).forEach(audio => {
-        audio.pause();
-        audio.currentTime = 0;
+        if(audio){
+          audio.pause();
+          audio.currentTime = 0;
+        }
       });
       const audio = audioMap[expressionName];
       if (audio) {
@@ -541,7 +543,7 @@
       resetEyes();
     }
 
-    // Hearts for love expression - improved shape and size
+    // Hearts for love expression - better shape and size
     let heartLeft = null;
     let heartRight = null;
 
@@ -549,7 +551,7 @@
       let heart = svg.querySelector('path.heart');
       if (heart) heart.remove();
       heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      // Better heart shape path, scaled and centered
+      // Improved heart shape path
       heart.setAttribute('d', "M50 15 C35 0, 0 0, 0 37.5 C0 75, 50 90, 50 120 C50 90, 100 75, 100 37.5 C100 0, 65 0, 50 15 Z");
       heart.setAttribute('fill', '#ff4d6d');
       heart.setAttribute('filter', 'url(#glow)');
@@ -611,7 +613,7 @@
     }
 
     async function neutralExpression() {
-      playAudioFor('neutral');
+      // No sound for neutral
       await new Promise(r => setTimeout(r, 1500));
     }
 
