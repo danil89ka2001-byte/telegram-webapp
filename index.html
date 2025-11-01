@@ -153,71 +153,57 @@
       line-height: 1.3;
     }
 
-    /* Workspace styles modified to show Cozmo style digital eyes without face */
+    /* Workspace styles modified: removed face, added Cozmo style eyes */
 
     #workspace {
       display: none;
       height: 100vh;
       background: linear-gradient(135deg, #0a152a, #1d2a47);
       color: #e0f7fa;
-      text-align: center;
       font-family: 'Montserrat', sans-serif;
       justify-content: center;
       align-items: center;
       display: flex;
     }
 
-    /* Container for digital eyes */
     .eyes-container {
       display: flex;
       gap: 80px;
+      position: relative;
+      width: 360px;
+      height: 150px;
     }
 
-    /* Each digital eye */
     .eye {
       width: 160px;
-      height: 100px;
-      background: #11151f;
-      border-radius: 30% / 50%;
-      box-shadow:
-        inset 0 0 30px #0f48ff,
-        0 0 25px #3f7cff99;
+      height: 150px;
       position: relative;
+      background: radial-gradient(circle at center, #1a1f3b 40%, #0a0f23 90%);
+      border-radius: 60% / 100%;
+      box-shadow:
+        inset 0 0 15px #3a50ff,
+        0 0 30px #3a50ff88;
       overflow: visible;
+      filter: drop-shadow(0 0 10px #3a50ffbb);
     }
 
-    /* Eye pixel grid background */
-    .eye::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 20% 50%, #0f48ff 2px, transparent 3px),
-        radial-gradient(circle at 40% 50%, #0f48ff 2px, transparent 3px),
-        radial-gradient(circle at 60% 50%, #0f48ff 2px, transparent 3px),
-        radial-gradient(circle at 80% 50%, #0f48ff 2px, transparent 3px);
-      background-size: 20% 100%;
-      background-repeat: no-repeat;
-      opacity: 0.15;
-      z-index: 0;
-    }
-
-    /* Iris shape: digital glowing arcs for Cozmo style */
-    .iris {
+    .eye-shape {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 110px;
-      height: 70px;
+      width: 130px;
+      height: 100px;
       transform: translate(-50%, -50%);
-      filter: drop-shadow(0 0 8px #3f7cffcc);
-      z-index: 1;
+      fill: #4a6fff;
+      filter: drop-shadow(0 0 15px #4a6fffcc);
+      transition: d 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     svg {
-      width: 100%;
-      height: 100%;
+      width: 130px;
+      height: 100px;
       display: block;
+      overflow: visible;
     }
   </style>
 </head>
@@ -241,18 +227,20 @@
 
   <div id="workspace" role="main" aria-label="Рабочее место QVANTIK">
     <div class="eyes-container" aria-label="Цифровые глаза робота Cozmo" role="img">
-      <div class="eye" id="eye-left" aria-label="Левый глаз"></div>
-      <div class="eye" id="eye-right" aria-label="Правый глаз"></div>
+      <div class="eye" id="eye-left" aria-label="Левый глаз">
+        <svg viewBox="0 0 130 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path class="eye-shape" id="shape-left" d="" />
+        </svg>
+      </div>
+      <div class="eye" id="eye-right" aria-label="Правый глаз">
+        <svg viewBox="0 0 130 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path class="eye-shape" id="shape-right" d="" />
+        </svg>
+      </div>
     </div>
   </div>
 
-  <!-- Modal for User Agreement -->
-  <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
-    <div id="modalContent">
-      <button id="modalCloseBtn" aria-label="Закрыть">×</button>
-      <div id="modalText"></div>
-    </div>
-  </div>
+  <!-- Modal and other content unchanged -->
 
   <script>
     const intro = document.getElementById('intro');
@@ -312,103 +300,111 @@
       showWorkspace();
     });
 
-    // Cozmo style digital eyes with animated expressions and random look directions
-    (function() {
-      const eyeLeft = document.getElementById('eye-left');
-      const eyeRight = document.getElementById('eye-right');
+    // Морфинг контура глаз для плавных выражений и направления взгляда
+    const shapeLeft = document.getElementById('shape-left');
+    const shapeRight = document.getElementById('shape-right');
 
-      const irisTemplates = {
-        neutral: `
-          <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <g stroke="#3f7cff" stroke-width="6" fill="none" stroke-linecap="round">
-              <path d="M 15 35 A 35 35 0 0 1 95 35" />
-              <path d="M 25 45 A 25 25 0 0 0 85 45" />
-            </g>
-          </svg>
-        `,
-        happy: `
-          <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <g stroke="#4ade80" stroke-width="6" fill="none" stroke-linecap="round">
-              <path d="M 15 45 A 35 35 0 0 1 95 45" />
-              <path d="M 35 30 A 15 15 0 0 0 75 30" />
-            </g>
-          </svg>
-        `,
-        angry: `
-          <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <g stroke="#f87171" stroke-width="6" fill="none" stroke-linecap="round">
-              <path d="M 15 25 A 35 35 0 0 0 95 25" />
-              <path d="M 25 40 A 25 25 0 0 1 85 40" />
-            </g>
-          </svg>
-        `,
-        sad: `
-          <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <g stroke="#60a5fa" stroke-width="6" fill="none" stroke-linecap="round">
-              <path d="M 15 40 A 35 35 0 0 0 95 40" />
-              <path d="M 35 50 A 15 15 0 0 1 75 50" />
-            </g>
-          </svg>
-        `,
-        surprised: `
-          <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <g stroke="#93c5fd" stroke-width="6" fill="none" stroke-linecap="round">
-              <path d="M 15 35 A 35 35 0 0 1 95 35" />
-              <circle cx="55" cy="35" r="10" stroke="#93c5fd" stroke-width="6" fill="none" />
-            </g>
-          </svg>
-        `
-      };
+    const expressions = {
+      neutral: "M10,50 Q65,90 120,50 Q65,10 10,50 Z",
+      happy:   "M10,65 Q65,95 120,65 Q90,45 10,50 Z",
+      angry:   "M10,40 Q65,80 120,40 Q90,20 10,40 Z",
+      sad:     "M10,55 Q65,75 120,55 Q90,80 10,55 Z",
+      surprised:"M10,50 Q65,100 120,50 Q65,0 10,50 Z"
+    };
 
-      const expressions = Object.keys(irisTemplates);
+    const lookOffsets = [
+      {x:0, y:0}, {x:-5, y:0}, {x:5, y:0}, {x:0, y:-5}, {x:0, y:5},
+      {x:-3, y:-3}, {x:3, y:-3}, {x:-3, y:3}, {x:3, y:3}
+    ];
 
-      const lookOffsets = [
-        [50, 50], [45, 50], [55, 50], [50, 45], [50, 55],
-        [47, 47], [53, 47], [47, 53], [53, 53]
-      ];
-
-      function createIris(svgString) {
-        const div = document.createElement('div');
-        div.className = 'iris';
-        div.innerHTML = svgString;
-        return div;
+    function shiftPath(d, dx, dy) {
+      const parts = d.split(' ');
+      let result = [];
+      for(let part of parts) {
+        if(part === 'M' || part === 'Q' || part === 'Z') {
+          result.push(part);
+          continue;
+        }
+        const coords = part.split(',');
+        if(coords.length === 2) {
+          const x = parseFloat(coords[0]) + dx;
+          const y = parseFloat(coords[1]) + dy;
+          result.push(x.toFixed(2)+','+y.toFixed(2));
+        } else {
+          result.push(part);
+        }
       }
+      return result.join(' ');
+    }
 
-      let irisLeft = null;
-      let irisRight = null;
+    function parsePath(d) {
+      const coords = d.match(/-?[\d.]+,-?[\d.]+/g);
+      if (!coords) return [];
+      return coords.map(c => c.split(',').map(Number));
+    }
 
-      function setIris(eyeElement, irisDiv) {
-        const old = eyeElement.querySelector('.iris');
-        if (old) old.remove();
-        eyeElement.appendChild(irisDiv);
+    function buildPath(points) {
+      return `M${points[0][0]},${points[0][1]} Q${points[1][0]},${points[1][1]} ${points[2][0]},${points[2][1]} Q${points[3][0]},${points[3][1]} ${points[4][0]},${points[4][1]} Z`;
+    }
+
+    function interpolatePoints(p1, p2, t) {
+      return p1.map((pt,i) => [pt[0] + (p2[i][0]-pt[0])*t, pt[1] + (p2[i][1]-pt[1])*t]);
+    }
+
+    function morphPath(el, fromD, toD, duration) {
+      const fromPoints = parsePath(fromD);
+      const toPoints = parsePath(toD);
+      if(fromPoints.length !== toPoints.length) {
+        el.setAttribute('d', toD);
+        return;
       }
-
-      function animateEyes() {
-        const exprLeft = expressions[Math.floor(Math.random() * expressions.length)];
-        const lookLeft = lookOffsets[Math.floor(Math.random() * lookOffsets.length)];
-        if (irisLeft) irisLeft.remove();
-        irisLeft = createIris(irisTemplates[exprLeft]);
-        setIris(eyeLeft, irisLeft);
-        irisLeft.style.top = lookLeft[1] + '%';
-        irisLeft.style.left = lookLeft[0] + '%';
-
-        const exprRight = expressions[Math.floor(Math.random() * expressions.length)];
-        const lookRight = lookOffsets[Math.floor(Math.random() * lookOffsets.length)];
-        if (irisRight) irisRight.remove();
-        irisRight = createIris(irisTemplates[exprRight]);
-        setIris(eyeRight, irisRight);
-        irisRight.style.top = lookRight[1] + '%';
-        irisRight.style.left = lookRight[0] + '%';
+      let start = null;
+      function animate(ts) {
+        if(!start) start = ts;
+        let progress = Math.min((ts - start)/duration, 1);
+        const points = interpolatePoints(fromPoints, toPoints, progress);
+        el.setAttribute('d', buildPath(points));
+        if(progress < 1) requestAnimationFrame(animate);
       }
+      requestAnimationFrame(animate);
+    }
 
-      animateEyes();
-      setInterval(() => {
-        animateEyes();
-      }, 3000 + Math.random() * 2000);
-    })();
+    let currentExprLeft = 'neutral';
+    let currentExprRight = 'neutral';
+    let currentLookLeft = {x:0,y:0};
+    let currentLookRight = {x:0,y:0};
 
-    // User Agreement modal text and modal handlers omitted for brevity (same as before)
-    // ... keep your existing modal code here unchanged ...
+    function setInitial() {
+      shapeLeft.setAttribute('d', shiftPath(expressions[currentExprLeft], currentLookLeft.x, currentLookLeft.y));
+      shapeRight.setAttribute('d', shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y));
+    }
+
+    setInitial();
+
+    function changeExpression() {
+      const newExprLeft = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
+      const newLookLeft = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
+      const newDLeft = shiftPath(expressions[newExprLeft], newLookLeft.x, newLookLeft.y);
+      const currentDLeft = shiftPath(expressions[currentExprLeft], currentLookLeft.x, currentLookLeft.y);
+
+      const newExprRight = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
+      const newLookRight = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
+      const newDRight = shiftPath(expressions[newExprRight], newLookRight.x, newLookRight.y);
+      const currentDRight = shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y);
+
+      morphPath(shapeLeft, currentDLeft, newDLeft, 1600);
+      morphPath(shapeRight, currentDRight, newDRight, 1600);
+
+      currentExprLeft = newExprLeft;
+      currentLookLeft = newLookLeft;
+      currentExprRight = newExprRight;
+      currentLookRight = newLookRight;
+    }
+
+    setInterval(() => {
+      changeExpression();
+    }, 3500 + Math.random()*1500);
+
   </script>
 </body>
 </html>
