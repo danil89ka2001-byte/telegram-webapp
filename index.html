@@ -153,7 +153,7 @@
       line-height: 1.3;
     }
 
-    /* Workspace styles modified: removed face, added Cozmo style eyes */
+    /* Workspace styles with digital rectangle eyes */
 
     #workspace {
       display: none;
@@ -169,41 +169,6 @@
     .eyes-container {
       display: flex;
       gap: 80px;
-      position: relative;
-      width: 360px;
-      height: 150px;
-    }
-
-    .eye {
-      width: 160px;
-      height: 150px;
-      position: relative;
-      background: radial-gradient(circle at center, #1a1f3b 40%, #0a0f23 90%);
-      border-radius: 60% / 100%;
-      box-shadow:
-        inset 0 0 15px #3a50ff,
-        0 0 30px #3a50ff88;
-      overflow: visible;
-      filter: drop-shadow(0 0 10px #3a50ffbb);
-    }
-
-    .eye-shape {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 130px;
-      height: 100px;
-      transform: translate(-50%, -50%);
-      fill: #4a6fff;
-      filter: drop-shadow(0 0 15px #4a6fffcc);
-      transition: d 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    svg {
-      width: 130px;
-      height: 100px;
-      display: block;
-      overflow: visible;
     }
   </style>
 </head>
@@ -227,16 +192,30 @@
 
   <div id="workspace" role="main" aria-label="Рабочее место QVANTIK">
     <div class="eyes-container" aria-label="Цифровые глаза робота Cozmo" role="img">
-      <div class="eye" id="eye-left" aria-label="Левый глаз">
-        <svg viewBox="0 0 130 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path class="eye-shape" id="shape-left" d="" />
-        </svg>
-      </div>
-      <div class="eye" id="eye-right" aria-label="Правый глаз">
-        <svg viewBox="0 0 130 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path class="eye-shape" id="shape-right" d="" />
-        </svg>
-      </div>
+      <svg id="eye-left" width="160" height="150" viewBox="0 0 160 150" aria-label="Левый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4a6fff" flood-opacity="0.6"/>
+          </filter>
+        </defs>
+        <rect id="rect-left" x="10" y="30" width="80" height="80" rx="20" ry="20" fill="#4a6fff" filter="url(#glow)" />
+      </svg>
+      <svg id="eye-right" width="160" height="150" viewBox="0 0 160 150" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4a6fff" flood-opacity="0.6"/>
+          </filter>
+        </defs>
+        <rect id="rect-right" x="10" y="30" width="80" height="80" rx="20" ry="20" fill="#4a6fff" filter="url(#glow)" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Modal for User Agreement -->
+  <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <div id="modalContent">
+      <button id="modalCloseBtn" aria-label="Закрыть">×</button>
+      <div id="modalText"></div>
     </div>
   </div>
 
@@ -300,112 +279,216 @@
       startEyeAnimation();
     });
 
-    // Морфинг контура глаз для плавных выражений и направления взгляда
-    const shapeLeft = document.getElementById('shape-left');
-    const shapeRight = document.getElementById('shape-right');
+    const rectLeft = document.getElementById('rect-left');
+    const rectRight = document.getElementById('rect-right');
 
-    const expressions = {
-      neutral: "M10,50 Q65,90 120,50 Q65,10 10,50 Z",
-      happy:   "M10,65 Q65,95 120,65 Q90,45 10,50 Z",
-      angry:   "M10,40 Q65,80 120,40 Q90,20 10,40 Z",
-      sad:     "M10,55 Q65,75 120,55 Q90,80 10,55 Z",
-      surprised:"M10,50 Q65,100 120,50 Q65,0 10,50 Z"
-    };
+    // Исходные параметры глаз
+    const REF_EYE_WIDTH = 80;
+    const REF_EYE_HEIGHT = 80;
+    const REF_CORNER_RADIUS = 20;
+    const REF_X = 10;
+    const REF_Y = 30;
 
-    const lookOffsets = [
-      {x:0, y:0}, {x:-5, y:0}, {x:5, y:0}, {x:0, y:-5}, {x:0, y:5},
-      {x:-3, y:-3}, {x:3, y:-3}, {x:-3, y:3}, {x:3, y:3}
-    ];
+    let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+    let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
 
-    function shiftPath(d, dx, dy) {
-      const parts = d.split(' ');
-      let result = [];
-      for(let part of parts) {
-        if(part === 'M' || part === 'Q' || part === 'Z') {
-          result.push(part);
-          continue;
-        }
-        const coords = part.split(',');
-        if(coords.length === 2) {
-          const x = parseFloat(coords[0]) + dx;
-          const y = parseFloat(coords[1]) + dy;
-          result.push(x.toFixed(2)+','+y.toFixed(2));
-        } else {
-          result.push(part);
-        }
+    function updateEye(rect, state) {
+      rect.setAttribute('x', state.x);
+      rect.setAttribute('y', state.y);
+      rect.setAttribute('width', state.width);
+      rect.setAttribute('height', state.height);
+      rect.setAttribute('rx', state.rx);
+      rect.setAttribute('ry', state.ry);
+    }
+
+    function resetEyes() {
+      leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+      rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
+      updateEye(rectLeft, leftEyeState);
+      updateEye(rectRight, rightEyeState);
+    }
+
+    async function blink() {
+      const steps = 6;
+      for(let i=0; i<steps; i++) {
+        leftEyeState.height -= REF_EYE_HEIGHT / steps;
+        rightEyeState.height -= REF_EYE_HEIGHT / steps;
+        leftEyeState.y += (REF_EYE_HEIGHT / steps) / 2;
+        rightEyeState.y += (REF_EYE_HEIGHT / steps) / 2;
+        leftEyeState.rx = Math.max(1, leftEyeState.height / 4);
+        leftEyeState.ry = leftEyeState.rx;
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.rx;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
       }
-      return result.join(' ');
-    }
-
-    function parsePath(d) {
-      const coords = d.match(/-?[\d.]+,-?[\d.]+/g);
-      if (!coords) return [];
-      return coords.map(c => c.split(',').map(Number));
-    }
-
-    function buildPath(points) {
-      return `M${points[0][0]},${points[0][1]} Q${points[1][0]},${points[1][1]} ${points[2][0]},${points[2][1]} Q${points[3][0]},${points[3][1]} ${points[4][0]},${points[4][1]} Z`;
-    }
-
-    function interpolatePoints(p1, p2, t) {
-      return p1.map((pt,i) => [pt[0] + (p2[i][0]-pt[0])*t, pt[1] + (p2[i][1]-pt[1])*t]);
-    }
-
-    function morphPath(el, fromD, toD, duration) {
-      const fromPoints = parsePath(fromD);
-      const toPoints = parsePath(toD);
-      if(fromPoints.length !== toPoints.length) {
-        el.setAttribute('d', toD);
-        return;
+      for(let i=0; i<steps; i++) {
+        leftEyeState.height += REF_EYE_HEIGHT / steps;
+        rightEyeState.height += REF_EYE_HEIGHT / steps;
+        leftEyeState.y -= (REF_EYE_HEIGHT / steps) / 2;
+        rightEyeState.y -= (REF_EYE_HEIGHT / steps) / 2;
+        leftEyeState.rx = Math.min(REF_CORNER_RADIUS, leftEyeState.height / 4);
+        leftEyeState.ry = leftEyeState.rx;
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.rx;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
       }
-      let start = null;
-      function animate(ts) {
-        if(!start) start = ts;
-        let progress = Math.min((ts - start)/duration, 1);
-        const points = interpolatePoints(fromPoints, toPoints, progress);
-        el.setAttribute('d', buildPath(points));
-        if(progress < 1) requestAnimationFrame(animate);
+      resetEyes();
+    }
+
+    async function moveEyes(dx, dy, steps=10, delay=40) {
+      for(let i=0; i<steps; i++) {
+        leftEyeState.x += dx / steps;
+        rightEyeState.x += dx / steps;
+        leftEyeState.y += dy / steps;
+        rightEyeState.y += dy / steps;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, delay));
       }
-      requestAnimationFrame(animate);
+    }
+    async function moveEyesBack(dx, dy, steps=10, delay=40) {
+      for(let i=0; i<steps; i++) {
+        leftEyeState.x -= dx / steps;
+        rightEyeState.x -= dx / steps;
+        leftEyeState.y -= dy / steps;
+        rightEyeState.y -= dy / steps;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, delay));
+      }
     }
 
-    let currentExprLeft = 'neutral';
-    let currentExprRight = 'neutral';
-    let currentLookLeft = {x:0,y:0};
-    let currentLookRight = {x:0,y:0};
+    async function happyExpression() {
+      const origStateLeft = {...leftEyeState};
+      const origStateRight = {...rightEyeState};
 
-    function setInitial() {
-      shapeLeft.setAttribute('d', shiftPath(expressions[currentExprLeft], currentLookLeft.x, currentLookLeft.y));
-      shapeRight.setAttribute('d', shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.max(5, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(5, leftEyeState.ry - 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height -= 2;
+        rightEyeState.height -= 2;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      await new Promise(r => setTimeout(r, 800));
+      for(let i=0; i<10; i++) {
+        leftEyeState.rx = Math.min(origStateLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origStateLeft.ry, leftEyeState.ry + 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.height += 2;
+        rightEyeState.height += 2;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 50));
+      }
+      resetEyes();
     }
 
-    function changeExpression() {
-      const newExprLeft = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
-      const newLookLeft = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
-      const newDLeft = shiftPath(expressions[newExprLeft], newLookLeft.x, newLookLeft.y);
-      const currentDLeft = shiftPath(expressions[currentExprLeft], currentLookLeft.x, currentLookLeft.y);
-
-      const newExprRight = Object.keys(expressions)[Math.floor(Math.random()*Object.keys(expressions).length)];
-      const newLookRight = lookOffsets[Math.floor(Math.random()*lookOffsets.length)];
-      const newDRight = shiftPath(expressions[newExprRight], newLookRight.x, newLookRight.y);
-      const currentDRight = shiftPath(expressions[currentExprRight], currentLookRight.x, currentLookRight.y);
-
-      morphPath(shapeLeft, currentDLeft, newDLeft, 1600);
-      morphPath(shapeRight, currentDRight, newDRight, 1600);
-
-      currentExprLeft = newExprLeft;
-      currentLookLeft = newLookLeft;
-      currentExprRight = newExprRight;
-      currentLookRight = newLookRight;
+    async function eyeAnimationLoop() {
+      resetEyes();
+      while(true) {
+        await moveEyes(10, 0);
+        await moveEyesBack(10, 0);
+        await blink();
+        await happyExpression();
+        await moveEyes(0, -10);
+        await moveEyesBack(0, -10);
+        await blink();
+        await new Promise(r => setTimeout(r, 1500));
+      }
     }
 
     function startEyeAnimation() {
-      setInitial();
-      changeExpression();
-      setInterval(() => {
-        changeExpression();
-      }, 3500 + Math.random()*1500);
+      eyeAnimationLoop();
     }
+  </script>
+
+  <script>
+    // User Agreement modal text and handlers (unchanged)
+    const userAgreementText = `Пользовательское соглашение
+
+Настоящее Пользовательское соглашение (актуальная редакция соглашения, опубликованная по ссылке (https://danil89ka2001-byte.github.io/telegram-webapp/) является публичной офертой и определяет условия использования веб-сайта Qvantik доступного по ссылке (https://danil89ka2001-byte.github.io/telegram-webapp/) (далее — Сайт), любыми пользователями сети Интернет, просматривающими Сайт (далее — Пользователи Сайта).
+
+Настоящее Пользовательское соглашение приравнивается к договору, составленному в письменной форме. Принимая настоящее Пользовательское соглашение, Пользователь выражает полное и безоговорочное согласие со всеми его условиями, в том числе, в части предоставления согласия на обработку персональных данных Пользователя на условиях, указанных в разделе 2 настоящего Пользовательского соглашения. В случае несогласия с данными условиями Пользователь должен покинуть Сайт.
+
+1.     Общие положения
+
+1.1. Настоящее Пользовательское соглашение вступает в силу с момента размещения его на Сайте и действует в отношении всей информации, размещенной на сайте в информационно-телекоммуникационной сети «Интернет».
+
+1.2. Пользователь принимает условия настоящего Пользовательского соглашения в полном объеме путем нажатия кнопки «Согласен» после подтверждения ознакомления с настоящим Пользовательским соглашением. Пользователь подтверждает свое ознакомление и согласие на использование файлов cookie.
+
+2.     Персональные данные
+
+2.1. В случае если отдельные сервисы Сайта предусматривают ввод персональных данных, такие персональные данные хранятся и обрабатываются в соответствии с принципами и правилами обработки персональных данных, предусмотренными Федеральным законом Российской Федерации от 27 июля 2006 г. № 152-ФЗ «О персональных данных».
+
+2.2. В отношении персональных данных сохраняется их конфиденциальность, кроме случаев добровольного предоставления Пользователем информации о себе для общего доступа неограниченному кругу лиц.
+
+2.3. Сайт не передает персональные данные третьим лицам, если только такая передача не предусмотрена законодательством Российской Федерации.
+
+2.4. Администрация Сайта принимает необходимые организационные и технические меры для защиты персональных данных от использования, не предусмотренного настоящим Пользовательским соглашением.
+
+3.     Обязательства Пользователя
+
+3.1. Пользователь соглашается не предпринимать действий и не оставлять комментарии и записи, которые могут рассматриваться как нарушающие законодательство Российской Федерации или нормы международного права, в том числе в сфере интеллектуальной собственности, авторских и/или смежных прав, общепринятые нормы морали и нравственности, а также любых действий, которые приводят или могут привести к нарушению нормальной работы сервисов Сайта и Сайта в целом.
+
+3.2. Использование материалов Сайта без согласия правообладателей не допускается.
+
+3.3. При цитировании материалов Сайта, включая охраняемые авторские произведения, ссылка на Сайт обязательна.
+
+3.4. Администрация Сайта не несет ответственности за посещение и использование Пользователем внешних ресурсов, ссылки на которые могут содержаться на Сайте.
+
+3.5. Администрация Сайта не несет ответственности и не имеет прямых или косвенных обязательств перед Пользователем в связи с любыми возможными или возникшими убытками, связанными с любым содержанием Сайта, регистрацией авторских прав и сведениями о такой регистрации, доступными на Сайте или полученными через внешние сайты или ресурсы либо иные контакты Пользователя, в которые он вступил, используя размещенную на Сайте информацию или ссылки на внешние ресурсы.
+
+4.     Прочие условия
+
+4.1. Все возможные споры, вытекающие из настоящего Пользовательского соглашения или связанные с ним, подлежат разрешению в соответствии с законодательством Российской Федерации.
+
+4.2. Бездействие со стороны Администрации Сайта в случае нарушения Пользователем положений Пользовательского соглашения не лишает Администрацию Сайта права предпринять позднее соответствующие действия в защиту своих интересов и защиту авторских прав на охраняемые в соответствии с законодательством материалы Сайта.
+
+4.3. Администрация Сайта вправе в любое время в одностороннем порядке изменять условия настоящего Пользовательского соглашения. Такие изменения вступают в силу с момента размещения новой версии Пользовательского соглашения на сайте. При несогласии Пользователя с внесенными изменениями он обязан покинуть Сайт, прекратить использование материалов и сервисов Сайта.
+`;
+
+    function openUserAgreementModal() {
+      modalText.textContent = userAgreementText;
+      modalOverlay.classList.add('active');
+      modalCloseBtn.focus();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeUserAgreementModal() {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = 'hidden'; // since agreement still visible
+      agreeBtn.focus();
+    }
+
+    userAgreementLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openUserAgreementModal();
+    });
+
+    modalCloseBtn.addEventListener('click', () => {
+      closeUserAgreementModal();
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        closeUserAgreementModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+        closeUserAgreementModal();
+      }
+    });
   </script>
 </body>
 </html>
