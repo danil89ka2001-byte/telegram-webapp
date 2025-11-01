@@ -32,27 +32,30 @@
       justify-content: center;
       align-items: center;
       user-select: none;
+      padding-left: 40px; /* shifted right */
     }
 
-    /* Container for the eyes centered */
+    /* Container for the eyes centered with more padding */
     .eyes-container {
       display: flex;
-      gap: 50px;
-      width: 280px;
-      height: 170px;
+      gap: 60px;
+      width: 320px;
+      height: 180px;
       position: relative;
     }
 
     svg.eye-svg {
-      width: 140px;
-      height: 140px;
+      width: 160px;
+      height: 160px;
       overflow: visible;
+      box-sizing: content-box;
+      padding: 8px; /* added padding inside SVG container */
     }
 
     rect.eye-rect {
       fill: #4a6fff;
-      rx: 20;
-      ry: 20;
+      rx: 22;
+      ry: 22;
       filter: url(#glow);
       transition: all 0.2s ease;
     }
@@ -69,21 +72,21 @@
 <body>
   <div id="workspace" role="main" aria-label="Рабочее место QVANTIK миниприложения Телеграм">
     <div class="eyes-container" aria-label="Цифровые глаза робота Cozmo" role="img">
-      <svg id="eye-left" class="eye-svg" viewBox="0 0 160 170" aria-label="Левый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
+      <svg id="eye-left" class="eye-svg" viewBox="0 0 180 180" aria-label="Левый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4a6fff" flood-opacity="0.6"/>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-left" class="eye-rect" x="10" y="30" width="80" height="80" />
+        <rect id="rect-left" class="eye-rect" x="15" y="40" width="100" height="100" />
       </svg>
-      <svg id="eye-right" class="eye-svg" viewBox="0 0 160 170" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
+      <svg id="eye-right" class="eye-svg" viewBox="0 0 180 180" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4a6fff" flood-opacity="0.6"/>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-right" class="eye-rect" x="10" y="30" width="80" height="80" />
+        <rect id="rect-right" class="eye-rect" x="15" y="40" width="100" height="100" />
       </svg>
     </div>
   </div>
@@ -94,11 +97,11 @@
     const svgLeft = document.getElementById('eye-left');
     const svgRight = document.getElementById('eye-right');
 
-    const REF_EYE_WIDTH = 80;
-    const REF_EYE_HEIGHT = 80;
-    const REF_CORNER_RADIUS = 20;
-    const REF_X = 10;
-    const REF_Y = 30;
+    const REF_EYE_WIDTH = 100;
+    const REF_EYE_HEIGHT = 100;
+    const REF_CORNER_RADIUS = 22;
+    const REF_X = 15;
+    const REF_Y = 40;
 
     let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
     let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
@@ -250,24 +253,24 @@
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.max(5, leftEyeState.rx - 1);
-        leftEyeState.ry = Math.max(5, leftEyeState.ry - 1);
+        leftEyeState.rx = Math.max(8, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(8, leftEyeState.ry - 1);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height -= 2;
-        rightEyeState.height -= 2;
+        leftEyeState.height -= 3;
+        rightEyeState.height -= 3;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 800));
+      await new Promise(r=>setTimeout(r, 900));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height += 2;
-        rightEyeState.height += 2;
+        leftEyeState.height += 3;
+        rightEyeState.height += 3;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
@@ -279,28 +282,28 @@
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.min(30, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(30, leftEyeState.ry + 1);
+        leftEyeState.rx = Math.min(35, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(35, leftEyeState.ry + 1);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height += 3;
-        rightEyeState.height += 3;
-        leftEyeState.y -= 1;
-        rightEyeState.y -= 1;
+        leftEyeState.height += 4;
+        rightEyeState.height += 4;
+        leftEyeState.y -= 1.5;
+        rightEyeState.y -= 1.5;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 800));
+      await new Promise(r=>setTimeout(r, 900));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.max(origLeft.rx, leftEyeState.rx - 1);
         leftEyeState.ry = Math.max(origLeft.ry, leftEyeState.ry - 1);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height -= 3;
-        rightEyeState.height -= 3;
-        leftEyeState.y += 1;
-        rightEyeState.y += 1;
+        leftEyeState.height -= 4;
+        rightEyeState.height -= 4;
+        leftEyeState.y += 1.5;
+        rightEyeState.y += 1.5;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
@@ -312,36 +315,36 @@
       const origLeft = {...leftEyeState};
       const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
-        leftEyeState.width += 5;
-        rightEyeState.width += 5;
-        leftEyeState.height += 10;
-        rightEyeState.height += 10;
-        leftEyeState.rx = Math.max(1, leftEyeState.rx - 2);
-        leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
+        leftEyeState.width += 7;
+        rightEyeState.width += 7;
+        leftEyeState.height += 14;
+        rightEyeState.height += 14;
+        leftEyeState.rx = Math.max(1, leftEyeState.rx - 3);
+        leftEyeState.ry = Math.max(1, leftEyeState.ry - 3);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.x -= 2.5;
-        rightEyeState.x -= 2.5;
-        leftEyeState.y -= 5;
-        rightEyeState.y -= 5;
+        leftEyeState.x -= 3.5;
+        rightEyeState.x -= 3.5;
+        leftEyeState.y -= 7;
+        rightEyeState.y -= 7;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1000));
+      await new Promise(r=>setTimeout(r, 1100));
       for(let i=0; i<10; i++) {
-        leftEyeState.width -= 5;
-        rightEyeState.width -= 5;
-        leftEyeState.height -= 10;
-        rightEyeState.height -= 10;
-        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 2);
-        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
+        leftEyeState.width -= 7;
+        rightEyeState.width -= 7;
+        leftEyeState.height -= 14;
+        rightEyeState.height -= 14;
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 3);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 3);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.x += 2.5;
-        rightEyeState.x += 2.5;
-        leftEyeState.y += 5;
-        rightEyeState.y += 5;
+        leftEyeState.x += 3.5;
+        rightEyeState.x += 3.5;
+        leftEyeState.y += 7;
+        rightEyeState.y += 7;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
@@ -357,24 +360,24 @@
         leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height -= 4;
-        rightEyeState.height -= 4;
-        leftEyeState.y += 3;
-        rightEyeState.y += 3;
+        leftEyeState.height -= 5;
+        rightEyeState.height -= 5;
+        leftEyeState.y += 4;
+        rightEyeState.y += 4;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 900));
+      await new Promise(r=>setTimeout(r, 1000));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height += 4;
-        rightEyeState.height += 4;
-        leftEyeState.y -= 3;
-        rightEyeState.y -= 3;
+        leftEyeState.height += 5;
+        rightEyeState.height += 5;
+        leftEyeState.y -= 4;
+        rightEyeState.y -= 4;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
@@ -403,7 +406,7 @@
       resetEyes();
       while(true) {
         const moves = [
-          [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
+          [12,0],[0,12],[-12,0],[0,-12],[12,12],[-12,12],[12,-12],[-12,-12],[0,0]
         ];
         const move = moves[Math.floor(Math.random() * moves.length)];
         await moveEyes(move[0], move[1]);
