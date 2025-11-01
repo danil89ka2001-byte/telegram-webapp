@@ -32,30 +32,30 @@
       justify-content: center;
       align-items: center;
       user-select: none;
-      padding-left: 40px; /* shifted right */
+      padding-left: 20px; /* немного левее, уменьшено */
     }
 
-    /* Container for the eyes centered with more padding */
+    /* Container for the eyes centered with adjusted size */
     .eyes-container {
       display: flex;
-      gap: 60px;
-      width: 320px;
-      height: 180px;
+      gap: 50px; /* чуть меньше расстояния */
+      width: 280px;
+      height: 160px;
       position: relative;
     }
 
     svg.eye-svg {
-      width: 160px;
-      height: 160px;
+      width: 140px;
+      height: 140px;
       overflow: visible;
       box-sizing: content-box;
-      padding: 8px; /* added padding inside SVG container */
+      padding: 12px; /* увеличен padding чтобы границы не заходили */
     }
 
     rect.eye-rect {
       fill: #4a6fff;
-      rx: 22;
-      ry: 22;
+      rx: 25;  /* увеличен радиус скругления */
+      ry: 25;
       filter: url(#glow);
       transition: all 0.2s ease;
     }
@@ -75,18 +75,18 @@
       <svg id="eye-left" class="eye-svg" viewBox="0 0 180 180" aria-label="Левый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-            <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#4a6fff" flood-opacity="0.6"/>
+            <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-left" class="eye-rect" x="15" y="40" width="100" height="100" />
+        <rect id="rect-left" class="eye-rect" x="20" y="45" width="90" height="90" />
       </svg>
       <svg id="eye-right" class="eye-svg" viewBox="0 0 180 180" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-            <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#4a6fff" flood-opacity="0.6"/>
+            <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-right" class="eye-rect" x="15" y="40" width="100" height="100" />
+        <rect id="rect-right" class="eye-rect" x="20" y="45" width="90" height="90" />
       </svg>
     </div>
   </div>
@@ -97,11 +97,11 @@
     const svgLeft = document.getElementById('eye-left');
     const svgRight = document.getElementById('eye-right');
 
-    const REF_EYE_WIDTH = 100;
-    const REF_EYE_HEIGHT = 100;
-    const REF_CORNER_RADIUS = 22;
-    const REF_X = 15;
-    const REF_Y = 40;
+    const REF_EYE_WIDTH = 90;
+    const REF_EYE_HEIGHT = 90;
+    const REF_CORNER_RADIUS = 25;
+    const REF_X = 20;
+    const REF_Y = 45;
 
     let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
     let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
@@ -183,9 +183,10 @@
       }
     }
 
-    // Hearts management
+    // Hearts management with rarer appearance
     let heartLeft = null;
     let heartRight = null;
+    let loveExpressionCooldown = false;
 
     function createHeart(svg) {
       let heart = svg.querySelector('path.heart');
@@ -213,13 +214,16 @@
     }
 
     async function loveExpression() {
+      if (loveExpressionCooldown) return; // Prevent too frequent appearance
+      loveExpressionCooldown = true;
+
       rectLeft.style.display = 'none';
       rectRight.style.display = 'none';
 
       heartLeft = createHeart(svgLeft);
       heartRight = createHeart(svgRight);
 
-      const beatDuration = 600;
+      const beatDuration = 700;
       let growing = true;
       let beats = 0;
       const maxBeats = 6;
@@ -232,6 +236,7 @@
             rectRight.style.display = '';
             resetEyes();
             resolve();
+            setTimeout(() => { loveExpressionCooldown = false; }, 15000); // 15s cooldown
             return;
           }
           if (growing) {
@@ -384,9 +389,73 @@
       }
       resetEyes();
     }
+    
+    // New expression: Fear (боязнь) - eyes shrink vertically and move slightly up
+    async function fearExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<8; i++) {
+        leftEyeState.height -= 6;
+        rightEyeState.height -= 6;
+        leftEyeState.y -= 3;
+        rightEyeState.y -= 3;
+        leftEyeState.rx = Math.max(5, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(5, leftEyeState.ry - 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r => setTimeout(r, 900));
+      for(let i=0; i<8; i++) {
+        leftEyeState.height += 6;
+        rightEyeState.height += 6;
+        leftEyeState.y += 3;
+        rightEyeState.y += 3;
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
+    }
 
-    async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 1500));
+    // New expression: Squint (прищуривание) - reduce width and increase rx/ry for sharper corners
+    async function squintExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
+      for(let i=0; i<8; i++) {
+        leftEyeState.width -= 8;
+        rightEyeState.width -= 8;
+        leftEyeState.rx = Math.min(REF_CORNER_RADIUS + 15, leftEyeState.rx + 2);
+        leftEyeState.ry = Math.min(REF_CORNER_RADIUS + 15, leftEyeState.ry + 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x += 4;
+        rightEyeState.x += 4;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r => setTimeout(r, 900));
+      for(let i=0; i<8; i++) {
+        leftEyeState.width += 8;
+        rightEyeState.width += 8;
+        leftEyeState.rx = Math.max(REF_CORNER_RADIUS, leftEyeState.rx - 2);
+        leftEyeState.ry = Math.max(REF_CORNER_RADIUS, leftEyeState.ry - 2);
+        rightEyeState.rx = leftEyeState.rx;
+        rightEyeState.ry = leftEyeState.ry;
+        leftEyeState.x -= 4;
+        rightEyeState.x -= 4;
+        updateEye(rectLeft, leftEyeState);
+        updateEye(rectRight, rightEyeState);
+        await new Promise(r => setTimeout(r, 40));
+      }
+      resetEyes();
     }
 
     const expressions = [
@@ -396,17 +465,28 @@
       angryExpression,
       loveExpression,
       neutralExpression,
+      fearExpression,
+      squintExpression,
     ];
 
     function getRandomExpression() {
-      return expressions[Math.floor(Math.random() * expressions.length)];
+      // Make loveExpression rarer by filtering it out mostly
+      let pool = expressions.filter(exp => exp !== loveExpression);
+      if (Math.random() < 0.1) { // 10% chance loveExpression included
+        pool.push(loveExpression);
+      }
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    async function neutralExpression() {
+      await new Promise(r => setTimeout(r, 1500));
     }
 
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
         const moves = [
-          [12,0],[0,12],[-12,0],[0,-12],[12,12],[-12,12],[12,-12],[-12,-12],[0,0]
+          [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
         const move = moves[Math.floor(Math.random() * moves.length)];
         await moveEyes(move[0], move[1]);
