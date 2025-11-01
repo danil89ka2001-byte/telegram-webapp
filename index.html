@@ -47,7 +47,6 @@
       color: #38b764;
     }
 
-    /* Intro styles */
     #intro {
       display: none;
       flex-direction: column;
@@ -88,7 +87,6 @@
       position: relative;
     }
 
-    /* Content styles */
     #content {
       display: none;
       height: 100vh;
@@ -128,7 +126,6 @@
       color: #666e7a;
     }
 
-    /* Agreement modal at bottom */
     #agreement {
       position: fixed;
       bottom: 0;
@@ -152,8 +149,6 @@
       max-width: 80%;
       line-height: 1.3;
     }
-
-    /* Workspace styles with digital rectangle eyes */
 
     #workspace {
       display: none;
@@ -284,7 +279,6 @@
     const svgLeft = document.getElementById('eye-left');
     const svgRight = document.getElementById('eye-right');
 
-    // Исходные параметры глаз
     const REF_EYE_WIDTH = 80;
     const REF_EYE_HEIGHT = 80;
     const REF_CORNER_RADIUS = 20;
@@ -308,14 +302,13 @@
       rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
       updateEye(rectLeft, leftEyeState);
       updateEye(rectRight, rightEyeState);
-
-      // Reset hearts if active
       removeHearts();
-      // Restore eye rect fill and filter
       rectLeft.setAttribute('fill', '#4a6fff');
       rectRight.setAttribute('fill', '#4a6fff');
       rectLeft.setAttribute('filter', 'url(#glow)');
       rectRight.setAttribute('filter', 'url(#glow)');
+      rectLeft.style.display = '';
+      rectRight.style.display = '';
     }
 
     async function blink() {
@@ -372,10 +365,11 @@
       }
     }
 
-    async function happyExpression() {
-      const origStateLeft = {...leftEyeState};
-      const origStateRight = {...rightEyeState};
+    // Expressions implementations with hearts and random timing
 
+    async function happyExpression() {
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.max(5, leftEyeState.rx - 1);
         leftEyeState.ry = Math.max(5, leftEyeState.ry - 1);
@@ -387,10 +381,10 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 50));
       }
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r=>setTimeout(r, 800));
       for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.min(origStateLeft.rx, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(origStateLeft.ry, leftEyeState.ry + 1);
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
         leftEyeState.height += 2;
@@ -403,9 +397,8 @@
     }
 
     async function sadExpression() {
-      const origStateLeft = {...leftEyeState};
-      const origStateRight = {...rightEyeState};
-
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(30, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(30, leftEyeState.ry + 1);
@@ -419,10 +412,10 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 50));
       }
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r=>setTimeout(r, 800));
       for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.max(origStateLeft.rx, leftEyeState.rx - 1);
-        leftEyeState.ry = Math.max(origStateLeft.ry, leftEyeState.ry - 1);
+        leftEyeState.rx = Math.max(origLeft.rx, leftEyeState.rx - 1);
+        leftEyeState.ry = Math.max(origLeft.ry, leftEyeState.ry - 1);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
         leftEyeState.height -= 3;
@@ -437,9 +430,8 @@
     }
 
     async function surprisedExpression() {
-      const origStateLeft = {...leftEyeState};
-      const origStateRight = {...rightEyeState};
-
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
         leftEyeState.width += 5;
         rightEyeState.width += 5;
@@ -457,14 +449,14 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 50));
       }
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r=>setTimeout(r, 1000));
       for(let i=0; i<10; i++) {
         leftEyeState.width -= 5;
         rightEyeState.width -= 5;
         leftEyeState.height -= 10;
         rightEyeState.height -= 10;
-        leftEyeState.rx = Math.min(origStateLeft.rx, leftEyeState.rx + 2);
-        leftEyeState.ry = Math.min(origStateLeft.ry, leftEyeState.ry + 2);
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 2);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
         leftEyeState.x += 2.5;
@@ -479,9 +471,8 @@
     }
 
     async function angryExpression() {
-      const origStateLeft = {...leftEyeState};
-      const origStateRight = {...rightEyeState};
-
+      const origLeft = {...leftEyeState};
+      const origRight = {...rightEyeState};
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.max(1, leftEyeState.rx - 1);
         leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
@@ -495,10 +486,10 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 50));
       }
-      await new Promise(r => setTimeout(r, 900));
+      await new Promise(r=>setTimeout(r, 900));
       for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.min(origStateLeft.rx, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(origStateLeft.ry, leftEyeState.ry + 2);
+        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
+        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
         rightEyeState.rx = leftEyeState.rx;
         rightEyeState.ry = leftEyeState.ry;
         leftEyeState.height += 4;
@@ -512,53 +503,60 @@
       resetEyes();
     }
 
-    // Влюбленность: глаза превращаются в сердечки с анимацией
+    // Hearts for love expression
+    let heartLeft = null;
+    let heartRight = null;
+
+    function createHeart(svg) {
+      let heart = svg.querySelector('path.heart');
+      if (heart) heart.remove();
+      heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      // Heart shape path
+      heart.setAttribute('d', "M10 30 C 10 10, 40 10, 40 30 S 75 50, 75 75 Q 75 90, 50 105 Q 25 90, 25 75 S 10 50, 10 30 Z");
+      heart.setAttribute('fill', '#ff4d6d');
+      heart.setAttribute('filter', 'url(#glow)');
+      heart.classList.add('heart');
+      svg.appendChild(heart);
+      heart.style.transformOrigin = 'center center';
+      heart.style.transition = 'transform 0.3s ease';
+      return heart;
+    }
+
+    function removeHearts() {
+      if (heartLeft) {
+        heartLeft.remove();
+        heartLeft = null;
+      }
+      if (heartRight) {
+        heartRight.remove();
+        heartRight = null;
+      }
+    }
+
     async function loveExpression() {
-      // Удаляем прямоугольники глаз
+      // Hide eye rects
       rectLeft.style.display = 'none';
       rectRight.style.display = 'none';
 
-      // Создаем SVG path сердечек
-      const heartPath = "M10 30 C 10 10, 40 10, 40 30 S 75 50, 75 75 Q 75 90, 50 105 Q 25 90, 25 75 S 10 50, 10 30 Z";
+      heartLeft = createHeart(svgLeft);
+      heartRight = createHeart(svgRight);
 
-      // Создаем сердца для левого и правого глаза
-      const createHeart = (svgId) => {
-        const svg = document.getElementById(svgId);
-        let heart = svg.querySelector('path.heart');
-        if (heart) heart.remove();
-        heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        heart.setAttribute('d', heartPath);
-        heart.setAttribute('fill', '#ff4d6d');
-        heart.setAttribute('filter', 'url(#glow)');
-        heart.classList.add('heart');
-        svg.appendChild(heart);
-        heart.style.transformOrigin = 'center center';
-        return heart;
-      };
-
-      const heartLeft = createHeart('eye-left');
-      const heartRight = createHeart('eye-right');
-
-      // Анимация "биения сердца"
       const beatDuration = 600;
       let growing = true;
+      let beats = 0;
+      const maxBeats = 6;
 
       return new Promise((resolve) => {
-        let beats = 0;
-        const maxBeats = 6;
-
         function beat() {
-          if(beats >= maxBeats) {
-            // Удаляем сердца, восстанавливаем глаза
-            heartLeft.remove();
-            heartRight.remove();
+          if (beats >= maxBeats) {
+            removeHearts();
             rectLeft.style.display = '';
             rectRight.style.display = '';
             resetEyes();
             resolve();
             return;
           }
-          if(growing) {
+          if (growing) {
             heartLeft.style.transform = 'scale(1.2)';
             heartRight.style.transform = 'scale(1.2)';
           } else {
@@ -573,26 +571,28 @@
       });
     }
 
-    // Список всех выражений с функциями
+    // Neutral pause expression
+    async function neutralExpression() {
+      await new Promise(r => setTimeout(r, 1500));
+    }
+
     const expressions = [
       happyExpression,
       sadExpression,
       surprisedExpression,
       angryExpression,
       loveExpression,
-      neutralExpression = async () => { await new Promise(r => setTimeout(r, 1500)); },
+      neutralExpression,
     ];
 
-    // Функция случайного выбора выражения с равномерной вероятностью
     function getRandomExpression() {
-      const idx = Math.floor(Math.random() * expressions.length);
-      return expressions[idx];
+      return expressions[Math.floor(Math.random() * expressions.length)];
     }
 
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
-        // Случайно двигаем глаза в разные направления
+        // Random eye movement
         const moves = [
           [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
@@ -600,10 +600,10 @@
         await moveEyes(move[0], move[1]);
         await moveEyesBack(move[0], move[1]);
 
-        // Моргание
+        // Blink
         await blink();
 
-        // Случайное выражение
+        // Random expression
         const expr = getRandomExpression();
         await expr();
       }
