@@ -281,6 +281,8 @@
 
     const rectLeft = document.getElementById('rect-left');
     const rectRight = document.getElementById('rect-right');
+    const svgLeft = document.getElementById('eye-left');
+    const svgRight = document.getElementById('eye-right');
 
     // Исходные параметры глаз
     const REF_EYE_WIDTH = 80;
@@ -306,6 +308,14 @@
       rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
       updateEye(rectLeft, leftEyeState);
       updateEye(rectRight, rightEyeState);
+
+      // Reset hearts if active
+      removeHearts();
+      // Restore eye rect fill and filter
+      rectLeft.setAttribute('fill', '#4a6fff');
+      rectRight.setAttribute('fill', '#4a6fff');
+      rectLeft.setAttribute('filter', 'url(#glow)');
+      rectRight.setAttribute('filter', 'url(#glow)');
     }
 
     async function blink() {
@@ -362,7 +372,6 @@
       }
     }
 
-    // Разные выражения глаз
     async function happyExpression() {
       const origStateLeft = {...leftEyeState};
       const origStateRight = {...rightEyeState};
@@ -404,7 +413,7 @@
         rightEyeState.ry = leftEyeState.ry;
         leftEyeState.height += 3;
         rightEyeState.height += 3;
-        leftEyeState.y -= 1;  // Поднять глаза чуть выше
+        leftEyeState.y -= 1;
         rightEyeState.y -= 1;
         updateEye(rectLeft, leftEyeState);
         updateEye(rectRight, rightEyeState);
@@ -503,35 +512,100 @@
       resetEyes();
     }
 
-    async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 1500));
+    // Влюбленность: глаза превращаются в сердечки с анимацией
+    async function loveExpression() {
+      // Удаляем прямоугольники глаз
+      rectLeft.style.display = 'none';
+      rectRight.style.display = 'none';
+
+      // Создаем SVG path сердечек
+      const heartPath = "M10 30 C 10 10, 40 10, 40 30 S 75 50, 75 75 Q 75 90, 50 105 Q 25 90, 25 75 S 10 50, 10 30 Z";
+
+      // Создаем сердца для левого и правого глаза
+      const createHeart = (svgId) => {
+        const svg = document.getElementById(svgId);
+        let heart = svg.querySelector('path.heart');
+        if (heart) heart.remove();
+        heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        heart.setAttribute('d', heartPath);
+        heart.setAttribute('fill', '#ff4d6d');
+        heart.setAttribute('filter', 'url(#glow)');
+        heart.classList.add('heart');
+        svg.appendChild(heart);
+        heart.style.transformOrigin = 'center center';
+        return heart;
+      };
+
+      const heartLeft = createHeart('eye-left');
+      const heartRight = createHeart('eye-right');
+
+      // Анимация "биения сердца"
+      const beatDuration = 600;
+      let growing = true;
+
+      return new Promise((resolve) => {
+        let beats = 0;
+        const maxBeats = 6;
+
+        function beat() {
+          if(beats >= maxBeats) {
+            // Удаляем сердца, восстанавливаем глаза
+            heartLeft.remove();
+            heartRight.remove();
+            rectLeft.style.display = '';
+            rectRight.style.display = '';
+            resetEyes();
+            resolve();
+            return;
+          }
+          if(growing) {
+            heartLeft.style.transform = 'scale(1.2)';
+            heartRight.style.transform = 'scale(1.2)';
+          } else {
+            heartLeft.style.transform = 'scale(1)';
+            heartRight.style.transform = 'scale(1)';
+            beats++;
+          }
+          growing = !growing;
+          setTimeout(beat, beatDuration);
+        }
+        beat();
+      });
     }
 
-    // Полный цикл эмоций
+    // Список всех выражений с функциями
+    const expressions = [
+      happyExpression,
+      sadExpression,
+      surprisedExpression,
+      angryExpression,
+      loveExpression,
+      neutralExpression = async () => { await new Promise(r => setTimeout(r, 1500)); },
+    ];
+
+    // Функция случайного выбора выражения с равномерной вероятностью
+    function getRandomExpression() {
+      const idx = Math.floor(Math.random() * expressions.length);
+      return expressions[idx];
+    }
+
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
-        await moveEyes(10, 0);
-        await moveEyesBack(10, 0);
-        await blink();
-        await happyExpression();
+        // Случайно двигаем глаза в разные направления
+        const moves = [
+          [10,0],[0,10],[-10,0],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
+        ];
+        const move = moves[Math.floor(Math.random() * moves.length)];
+        await moveEyes(move[0], move[1]);
+        await moveEyesBack(move[0], move[1]);
 
-        await moveEyes(0, -10);
-        await moveEyesBack(0, -10);
+        // Моргание
         await blink();
-        await sadExpression();
 
-        await moveEyes(10, 10);
-        await moveEyesBack(10, 10);
-        await blink();
-        await surprisedExpression();
-
-        await moveEyes(-10, 0);
-        await moveEyesBack(-10, 0);
-        await blink();
-        await angryExpression();
-
-        await neutralExpression();
+        // Случайное выражение
+        const expr = getRandomExpression();
+        await expr();
       }
     }
 
