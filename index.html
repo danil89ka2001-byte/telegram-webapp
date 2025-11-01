@@ -232,12 +232,12 @@
   </style>
 </head>
 <body>
-  <div class="intro" id="intro">
+  <div class="intro" id="intro" style="display:none;">
     <h1>QVANTIK</h1>
     <p>Искусственный интеллект</p>
   </div>
 
-  <div class="content" id="content">
+  <div class="content" id="content" style="display:none;">
     <h2>Добро пожаловать в QVANTIK</h2>
     <p>QVANTIK — это <span class="highlight">искусственный интеллект</span>, созданный для развлечения и розыгрышей. Он умеет удивлять, развлекать и создавать уникальные интерактивные сценарии, которые подарят вам море позитива и неожиданных эмоций.</p>
     <p>Наша нейросеть сочетает в себе передовые технологии и творческий подход, чтобы сделать общение с ней максимально увлекательным и легким. Попробуйте, и вы убедитесь, что искусственный интеллект может быть не только полезным, но и очень веселым!</p>
@@ -272,44 +272,50 @@
     // Проверка, согласился ли пользователь ранее
     const userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
 
-    function showWorkspace() {
-      intro.style.display = 'none';
+    function showIntroThenContentAndAgreement() {
+      intro.style.display = 'flex';
       content.style.display = 'none';
       agreement.style.display = 'none';
-      workspace.classList.add('active');
-      document.body.style.overflow = 'auto';
-    }
-
-    function showAgreement() {
-      intro.style.display = 'none';
-      content.style.display = 'block';
-      agreement.style.display = 'flex';
       workspace.classList.remove('active');
       document.body.style.overflow = 'hidden';
+
+      setTimeout(() => {
+        intro.style.display = 'none';
+        content.style.display = 'block';
+        agreement.style.display = 'flex';
+      }, 5000);
+    }
+
+    function showIntroThenWorkspace() {
+      intro.style.display = 'flex';
+      content.style.display = 'none';
+      agreement.style.display = 'none';
+      workspace.classList.remove('active');
+      document.body.style.overflow = 'hidden';
+
+      setTimeout(() => {
+        intro.style.display = 'none';
+        workspace.classList.add('active');
+        document.body.style.overflow = 'auto';
+      }, 5000);
     }
 
     window.addEventListener('load', () => {
       if (userAgreed) {
-        showWorkspace();
+        showIntroThenWorkspace();
       } else {
-        // Показываем интро 5 сек, затем содержимое + соглашение
-        intro.style.display = 'flex';
-        content.style.display = 'none';
-        agreement.style.display = 'none';
-        workspace.classList.remove('active');
-        document.body.style.overflow = 'hidden';
-
-        setTimeout(() => {
-          intro.style.display = 'none';
-          content.style.display = 'block';
-          agreement.style.display = 'flex';
-        }, 5000);
+        showIntroThenContentAndAgreement();
       }
     });
 
     agreeBtn.addEventListener('click', () => {
       localStorage.setItem('qvantikUserAgreed', 'true');
-      showWorkspace();
+      // После согласия показать рабочее место сразу без интро
+      intro.style.display = 'none';
+      content.style.display = 'none';
+      agreement.style.display = 'none';
+      workspace.classList.add('active');
+      document.body.style.overflow = 'auto';
     });
 
     // Примитивный "фан" функционал с рандомным ответом
@@ -330,7 +336,6 @@
         response.textContent = 'Пожалуйста, напишите что-нибудь.';
         return;
       }
-      // Выбираем случайный ответ, подставляя пользовательский ввод, если есть {input}
       let randomResponse = funResponses[Math.floor(Math.random() * funResponses.length)];
       if (randomResponse.includes('{input}')) {
         randomResponse = randomResponse.replace('{input}', inputText);
