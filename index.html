@@ -1,389 +1,131 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Красочная 2D Игра</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QVANTIK - Искусственный интеллект</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-  * {
-    box-sizing: border-box;
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    user-select: none;
-  }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: #0d0f1a;
+      color: #f0f0f5;
+      overflow: hidden;
+    }
 
-  #gameContainer {
-    position: relative;
-    width: 800px;
-    height: 500px;
-    background: #d0e7ff;
-    border-radius: 20px;
-    box-shadow:
-      0 8px 15px rgba(0, 0, 0, 0.25),
-      inset 0 0 40px rgba(255, 255, 255, 0.6);
-    overflow: hidden;
-  }
+    .intro {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6e45e2, #88d3ce);
+      flex-direction: column;
+      text-align: center;
+      animation: fadeInOut 5s forwards;
+    }
 
-  canvas {
-    display: block;
-    background: linear-gradient(to top, #a0c8ff, #ffffff 80%);
-    border-radius: 20px;
-    box-shadow: inset 0 0 50px #b3d4ff;
-  }
+    .intro h1 {
+      font-size: 3.5rem;
+      letter-spacing: 0.15em;
+      margin: 0;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px #88d3ce, 0 0 40px #6e45e2;
+    }
 
-  #score {
-    position: absolute;
-    top: 15px;
-    left: 20px;
-    font-size: 26px;
-    font-weight: 700;
-    color: #1a1a1a;
-    text-shadow: 1px 1px 3px #ffffffcc;
-  }
+    .intro p {
+      margin-top: 1rem;
+      font-size: 1.25rem;
+      color: #d0f0f0;
+      text-shadow: 0 0 10px #88d3ce;
+    }
 
-  #message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 42px;
-    font-weight: 900;
-    color: #d32f2f;
-    text-shadow:
-      2px 2px 6px #fff,
-      0 0 10px #d32f2f;
-    display: none;
-    user-select: none;
-  }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: scale(0.95); }
+      10% { opacity: 1; transform: scale(1); }
+      90% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.95); visibility: hidden; }
+    }
 
-  #restartBtn {
-    position: absolute;
-    top: 62%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #2979ff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 28px;
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    cursor: pointer;
-    box-shadow:
-      0 5px 15px rgba(41, 121, 255, 0.6);
-    display: none;
-    transition: background-color 0.25s ease;
-    user-select: none;
-  }
+    .content {
+      display: none;
+      height: 100vh;
+      background: radial-gradient(circle at center, #1a1d2e 0%, #0d0f1a 80%);
+      color: #cdeffd;
+      padding: 3rem 2rem;
+      overflow-y: auto;
+      text-align: center;
+    }
 
-  #restartBtn:hover {
-    background: #004ecb;
-  }
+    .content.active {
+      display: block;
+      animation: fadeInContent 1.5s ease forwards;
+    }
 
-  h1 {
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    margin: 0;
-    font-size: 30px;
-    font-weight: 900;
-    color: #1a1a1a;
-    text-shadow: 1px 1px 3px #ffffffcc;
-    user-select: none;
-  }
-</style>
+    @keyframes fadeInContent {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .content h2 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #73d2de;
+      text-shadow: 0 0 15px #73d2de;
+    }
+
+    .content p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+      color: #a9d6e5;
+    }
+
+    .highlight {
+      color: #4ade80;
+      font-weight: 700;
+      text-shadow: 0 0 10px #4ade80;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #666e7a;
+    }
+  </style>
 </head>
 <body>
-  <div id="gameContainer">
-    <h1>Собирай Монетки!</h1>
-    <canvas id="gameCanvas" width="800" height="500"></canvas>
-    <div id="score">Счёт: 0</div>
-    <div id="message">Игра окончена!</div>
-    <button id="restartBtn">Начать заново</button>
+  <div class="intro" id="intro">
+    <h1>QVANTIK</h1>
+    <p>Искусственный интеллект</p>
+  </div>
+  <div class="content" id="content">
+    <h2>Добро пожаловать в QVANTIK</h2>
+    <p>QVANTIK — это <span class="highlight">искусственный интеллект</span>, созданный для развлечения и розыгрышей. Он умеет удивлять, развлекать и создавать уникальные интерактивные сценарии, которые подарят вам море позитива и неожиданных эмоций.</p>
+    <p>Наша нейросеть сочетает в себе передовые технологии и творческий подход, чтобы сделать общение с ней максимально увлекательным и легким. Попробуйте, и вы убедитесь, что искусственный интеллект может быть не только полезным, но и очень веселым!</p>
+    <footer>© 2024 QVANTIK AI | Все права защищены</footer>
   </div>
 
-<script>
-(() => {
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
+  <script>
+    // Показываем интро, затем плавно переключаемся на основное содержимое
+    window.addEventListener('load', () => {
+      const intro = document.getElementById('intro');
+      const content = document.getElementById('content');
 
-  const scoreEl = document.getElementById('score');
-  const messageEl = document.getElementById('message');
-  const restartBtn = document.getElementById('restartBtn');
-
-  const GAME_WIDTH = canvas.width;
-  const GAME_HEIGHT = canvas.height;
-
-  // Изображения с прозрачным фоном для лучшего визуала
-  const imageSources = {
-    player: 'https://i.imgur.com/6QFhxzL.png',   // Красочный спрайт персонажа 48x48 px
-    item: 'https://i.imgur.com/9yQmGVn.png',     // Яркая монетка 32x32 px
-    obstacle: 'https://i.imgur.com/7eH6rN9.png'  // Красный шип 40x40 px
-  };
-
-  function loadImage(src) {
-    return new Promise(resolve => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => resolve(img);
+      setTimeout(() => {
+        intro.style.display = 'none';
+        content.classList.add('active');
+        document.body.style.overflow = 'auto';
+      }, 5000); // 5 секунд интро
     });
-  }
-
-  class Player {
-    constructor(img) {
-      this.img = img;
-      this.width = 48;
-      this.height = 48;
-      this.x = 50;
-      this.y = GAME_HEIGHT / 2 - this.height / 2;
-      this.speed = 6;
-      this.dx = 0;
-      this.dy = 0;
-    }
-
-    update(keys) {
-      this.dx = 0;
-      this.dy = 0;
-
-      if (keys['arrowup'] || keys['w']) this.dy = -this.speed;
-      if (keys['arrowdown'] || keys['s']) this.dy = this.speed;
-      if (keys['arrowleft'] || keys['a']) this.dx = -this.speed;
-      if (keys['arrowright'] || keys['d']) this.dx = this.speed;
-
-      this.x += this.dx;
-      this.y += this.dy;
-
-      // Границы игрового поля с небольшим отступом для красоты
-      const margin = 6;
-      if (this.x < margin) this.x = margin;
-      if (this.x + this.width > GAME_WIDTH - margin) this.x = GAME_WIDTH - this.width - margin;
-      if (this.y < margin) this.y = margin;
-      if (this.y + this.height > GAME_HEIGHT - margin) this.y = GAME_HEIGHT - this.height - margin;
-    }
-
-    draw(ctx) {
-      ctx.shadowColor = 'rgba(0,0,0,0.3)';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetX = 3;
-      ctx.shadowOffsetY = 3;
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      ctx.shadowBlur = 0;
-    }
-
-    getBounds() {
-      return { x: this.x, y: this.y, width: this.width, height: this.height };
-    }
-  }
-
-  class Item {
-    constructor(img) {
-      this.img = img;
-      this.width = 32;
-      this.height = 32;
-      this.x = Math.random() * (GAME_WIDTH - this.width - 20) + 10;
-      this.y = Math.random() * (GAME_HEIGHT - this.height - 20) + 10;
-      this.collected = false;
-      this.rotation = 0;
-    }
-
-    draw(ctx) {
-      if (!this.collected) {
-        ctx.save();
-        ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-        this.rotation += 0.05;
-        ctx.rotate(this.rotation);
-        ctx.shadowColor = 'rgba(255, 223, 0, 0.75)';
-        ctx.shadowBlur = 12;
-        ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
-        ctx.restore();
-        ctx.shadowBlur = 0;
-      }
-    }
-
-    getBounds() {
-      return { x: this.x, y: this.y, width: this.width, height: this.height };
-    }
-  }
-
-  class Obstacle {
-    constructor(img, y) {
-      this.img = img;
-      this.width = 40;
-      this.height = 40;
-      this.x = GAME_WIDTH + Math.random() * 300;
-      this.y = y;
-      this.speed = 3 + Math.random() * 3;
-      this.oscillationAmplitude = 15 + Math.random() * 10;
-      this.oscillationFrequency = 0.03 + Math.random() * 0.02;
-      this.oscillationAngle = 0;
-    }
-
-    update() {
-      this.x -= this.speed;
-      this.oscillationAngle += this.oscillationFrequency;
-      this.y += Math.sin(this.oscillationAngle) * 0.7;
-
-      if (this.x + this.width < 0) {
-        this.x = GAME_WIDTH + Math.random() * 300;
-        this.speed = 3 + Math.random() * 3;
-        this.y = Math.random() * (GAME_HEIGHT - this.height - 20) + 10;
-        this.oscillationAmplitude = 15 + Math.random() * 10;
-        this.oscillationFrequency = 0.03 + Math.random() * 0.02;
-        this.oscillationAngle = 0;
-      }
-    }
-
-    draw(ctx) {
-      ctx.shadowColor = 'rgba(255,0,0,0.6)';
-      ctx.shadowBlur = 10;
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      ctx.shadowBlur = 0;
-    }
-
-    getBounds() {
-      return { x: this.x, y: this.y, width: this.width, height: this.height };
-    }
-  }
-
-  function isColliding(a, b) {
-    return a.x < b.x + b.width &&
-           a.x + a.width > b.x &&
-           a.y < b.y + b.height &&
-           a.y + a.height > b.y;
-  }
-
-  let player, items, obstacles;
-  let keys = {};
-  let score = 0;
-  let gameOver = false;
-
-  function resetGame() {
-    score = 0;
-    gameOver = false;
-    scoreEl.textContent = 'Счёт: 0';
-    messageEl.style.display = 'none';
-    restartBtn.style.display = 'none';
-
-    player.x = 50;
-    player.y = GAME_HEIGHT / 2 - player.height / 2;
-
-    // Сброс предметов
-    items = [];
-    for (let i = 0; i < 7; i++) {
-      items.push(new Item(images.item));
-    }
-
-    // Сброс препятствий
-    obstacles = [];
-    for (let i = 0; i < 4; i++) {
-      obstacles.push(new Obstacle(images.obstacle, Math.random() * (GAME_HEIGHT - 60) + 30));
-    }
-  }
-
-  const images = {};
-
-  async function loadAssets() {
-    images.player = await loadImage(imageSources.player);
-    images.item = await loadImage(imageSources.item);
-    images.obstacle = await loadImage(imageSources.obstacle);
-  }
-
-  function drawBackground(ctx) {
-    // Рисуем мягкие облака на небе
-    const cloudCount = 7;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-    for (let i = 0; i < cloudCount; i++) {
-      const x = (i * 130 + (Date.now() / 50) % 130) % GAME_WIDTH;
-      const y = 50 + 20 * Math.sin(Date.now() / 1000 + i);
-      drawCloud(ctx, x, y);
-    }
-  }
-
-  function drawCloud(ctx, x, y) {
-    ctx.beginPath();
-    ctx.ellipse(x, y, 30, 20, 0, 0, Math.PI * 2);
-    ctx.ellipse(x + 25, y + 5, 30, 25, 0, 0, Math.PI * 2);
-    ctx.ellipse(x + 55, y, 30, 20, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  function gameLoop() {
-    if (gameOver) return;
-
-    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-
-    drawBackground(ctx);
-
-    player.update(keys);
-    player.draw(ctx);
-
-    items.forEach(item => {
-      item.draw(ctx);
-      if (!item.collected && isColliding(player.getBounds(), item.getBounds())) {
-        item.collected = true;
-        score++;
-        scoreEl.textContent = 'Счёт: ' + score;
-        // Звук или анимация можно добавить здесь
-      }
-    });
-
-    obstacles.forEach(obstacle => {
-      obstacle.update();
-      obstacle.draw(ctx);
-
-      if (isColliding(player.getBounds(), obstacle.getBounds())) {
-        gameOver = true;
-        messageEl.style.display = 'block';
-        restartBtn.style.display = 'block';
-      }
-    });
-
-    // Если все монетки собраны - победа
-    if (items.every(item => item.collected)) {
-      gameOver = true;
-      messageEl.textContent = 'Вы выиграли! 🎉';
-      messageEl.style.color = '#2e7d32';
-      messageEl.style.display = 'block';
-      restartBtn.style.display = 'block';
-      return;
-    }
-
-    requestAnimationFrame(gameLoop);
-  }
-
-  window.addEventListener('keydown', e => {
-    keys[e.key.toLowerCase()] = true;
-  });
-
-  window.addEventListener('keyup', e => {
-    keys[e.key.toLowerCase()] = false;
-  });
-
-  restartBtn.addEventListener('click', () => {
-    messageEl.textContent = 'Игра окончена!';
-    messageEl.style.color = '#d32f2f';
-    resetGame();
-    gameLoop();
-  });
-
-  loadAssets().then(() => {
-    player = new Player(images.player);
-    resetGame();
-    gameLoop();
-  });
-})();
-</script>
+  </script>
 </body>
 </html>
