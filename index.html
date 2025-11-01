@@ -1,75 +1,65 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LongCat-Video генерация</title>
-<style>
-  body { max-width: 480px; margin: 2rem auto; font-family: Arial, sans-serif; }
-  label, input, textarea, button { display: block; width: 100%; margin-bottom: 1rem; }
-  video { width: 100%; max-height: 300px; margin-top: 1rem; border-radius: 8px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Генерация видео LongCat-Video</title>
 </head>
 <body>
-  <h1>Генерация видео с LongCat-Video</h1>
-  
-  <label for="image">Загрузите изображение (опционально):</label>
-  <input type="file" id="image" accept="image/*" />
-  
-  <label for="prompt">Введите описание для видео:</label>
-  <textarea id="prompt" rows="3" placeholder="Например, 'a cat walking in the park'"></textarea>
-  
-  <button id="generateBtn">Сгенерировать видео</button>
-  
-  <video id="resultVideo" controls></video>
-  
-  <div id="status"></div>
-  
-<script>
-  const generateBtn = document.getElementById('generateBtn');
-  const imageInput = document.getElementById('image');
-  const promptInput = document.getElementById('prompt');
-  const resultVideo = document.getElementById('resultVideo');
-  const statusDiv = document.getElementById('status');
+  <h1>Генерация видео из текста и изображения</h1>
+  <form id="videoForm">
+    <label>
+      Текст (prompt):<br />
+      <input type="text" name="prompt" required />
+    </label>
+    <br /><br />
+    <label>
+      Изображение (опционально):<br />
+      <input type="file" name="image" accept="image/*" />
+    </label>
+    <br /><br />
+    <button type="submit">Сгенерировать видео</button>
+  </form>
 
-  generateBtn.onclick = async () => {
-    statusDiv.textContent = "";
-    resultVideo.src = "";
-    
-    if (!promptInput.value.trim()) {
-      alert("Введите описание для видео");
-      return;
-    }
+  <h2>Результат:</h2>
+  <video id="resultVideo" controls style="max-width: 100%; display: none;"></video>
 
-    const formData = new FormData();
-    if (imageInput.files.length > 0) {
-      formData.append("image", imageInput.files[0]);
-    }
-    formData.append("prompt", promptInput.value.trim());
+  <script>
+    const form = document.getElementById('videoForm');
+    const video = document.getElementById('resultVideo');
 
-    statusDiv.textContent = "Генерация видео, подождите...";
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    try {
-      const response = await fetch("/generate-video", {
-        method: "POST",
-        body: formData
-      });
+      const formData = new FormData(form);
 
-      if (!response.ok) {
-        throw new Error("Ошибка сервера при генерации видео");
+      video.style.display = 'none';
+      video.src = '';
+
+      try {
+        const response = await fetch('http://localhost:3000/generate-video', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          alert('Ошибка сервера: ' + errorText);
+          return;
+        }
+
+        const data = await response.json();
+        if (data.video_url) {
+          video.src = data.video_url;
+          video.style.display = 'block';
+          video.play();
+        } else {
+          alert('Видео не было сгенерировано.');
+        }
+      } catch (err) {
+        alert('Ошибка: ' + err.message);
       }
-
-      const data = await response.json();
-      if (data.video_url) {
-        resultVideo.src = data.video_url;
-        statusDiv.textContent = "Видео готово!";
-      } else {
-        statusDiv.textContent = "Видео не было сгенерировано";
-      }
-    } catch (err) {
-      statusDiv.textContent = "Ошибка: " + err.message;
-    }
-  };
-</script>
+    });
+  </script>
 </body>
 </html>
