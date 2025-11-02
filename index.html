@@ -75,8 +75,8 @@
       letter-spacing: 0.15em;
       margin: 1rem 0 0 0;
       text-shadow: 0 0 20px #88d3ce, 0 0 40px #6e45e2;
-      position: relative;
       z-index: 10;
+      position: relative;
     }
 
     #intro p {
@@ -84,8 +84,8 @@
       font-size: 1.25rem;
       color: #d0f0f0;
       text-shadow: 0 0 10px #88d3ce;
-      position: relative;
       z-index: 10;
+      position: relative;
     }
 
     /* Content styles */
@@ -161,42 +161,36 @@
       color: #e0f7fa;
       font-family: 'Montserrat', sans-serif;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
+      display: flex;
       user-select: none;
-      padding-top: 80px; /* чуть выше центра */
-      flex-direction: column;
-      position: relative;
-
-      display: flex; /* сделано для центрирования */
+      padding-left: 20px;
     }
 
-    /* Центрируем контейнер глаз по горизонтали, уменьшаем расстояние между глазами */
+    /* Container for the eyes centered with adjusted size and enough right padding */
     .eyes-container {
       display: flex;
-      gap: 25px; /* уменьшено */
-      width: 295px; /* уменьшена ширина */
+      gap: 50px; /* расстояние между глазами */
+      width: 350px; /* увеличена ширина, чтобы правый глаз не обрезался */
       height: 160px;
-      margin: 0 auto;
       position: relative;
-      padding-right: 20px;
-      box-sizing: content-box;
+      padding-right: 20px; /* дополнительный отступ справа */
     }
 
     svg.eye-svg {
-      width: 135px;
-      height: 135px;
+      width: 140px;
+      height: 140px;
       overflow: visible;
       box-sizing: content-box;
-      padding: 12px;
+      padding: 12px; /* увеличен padding чтобы границы не заходили */
     }
 
     rect.eye-rect {
       fill: #4a6fff;
-      rx: 25;
+      rx: 25;  /* радиус скругления */
       ry: 25;
       filter: url(#glow);
       transition: all 0.2s ease;
-      shape-rendering: geometricPrecision;
     }
 
     path.heart {
@@ -207,10 +201,10 @@
       pointer-events: none;
     }
 
-    /* Подвижный рот - пульсирующая линия сердца */
+    /* Уменьшенный рот 1:4 по ширине с глазами, цвет совпадает с глазами */
     .mouth-container {
-      width: 350px;
-      height: 80px;
+      width: 35px; /* приблизительно 1/4 ширины глаза (140/4) */
+      height: 20px;
       margin: 6px auto 0 auto;
       position: relative;
       overflow: visible;
@@ -220,13 +214,14 @@
       width: 100%;
       height: 100%;
       overflow: visible;
+      transform-origin: center center;
     }
 
     path.mouth-wave {
       fill: none;
-      stroke: #00aaff;
-      stroke-width: 4;
-      filter: drop-shadow(0 0 8px #00aaff);
+      stroke: #4a6fff; /* цвет рот = цвет глаз */
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 5px #4a6fff);
       stroke-linejoin: round;
       stroke-linecap: round;
       vector-effect: non-scaling-stroke;
@@ -259,7 +254,7 @@
             <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-left" class="eye-rect" x="20" y="48" width="85" height="85" />
+        <rect id="rect-left" class="eye-rect" x="20" y="45" width="90" height="90" />
       </svg>
       <svg id="eye-right" class="eye-svg" viewBox="0 0 180 180" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -267,16 +262,12 @@
             <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-right" class="eye-rect" x="20" y="48" width="85" height="85" />
+        <rect id="rect-right" class="eye-rect" x="20" y="45" width="90" height="90" />
       </svg>
     </div>
     <div class="mouth-container" aria-label="Анимированный рот пульса" role="img">
-      <svg class="mouth-svg" viewBox="0 0 350 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" >
-        <!-- 4 пульсирующие волны -->
-        <path id="wave1" class="mouth-wave" d="M0 40 L35 40 L44 10 L53 70 L62 40 L97 40" />
-        <path id="wave2" class="mouth-wave" d="M97 40 L132 40 L141 20 L150 60 L159 40 L194 40" />
-        <path id="wave3" class="mouth-wave" d="M194 40 L229 40 L238 15 L247 65 L256 40 L291 40" />
-        <path id="wave4" class="mouth-wave" d="M291 40 L326 40 L335 18 L344 62 L353 40 L350 40" />
+      <svg class="mouth-svg" viewBox="0 0 35 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" >
+        <path id="wave" class="mouth-wave" d="M0 10 L8 10 L11 3 L14 17 L17 10 L25 10" />
       </svg>
     </div>
   </div>
@@ -334,432 +325,10 @@
       showWorkspace();
     });
 
-    const rectLeft = document.getElementById('rect-left');
-    const rectRight = document.getElementById('rect-right');
-    const svgLeft = document.getElementById('eye-left');
-    const svgRight = document.getElementById('eye-right');
-
-    const REF_EYE_WIDTH = 85;
-    const REF_EYE_HEIGHT = 85;
-    const REF_CORNER_RADIUS = 25;
-    const REF_X = 20;
-    const REF_Y = 48;
-
-    let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
-    let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
-
-    function updateEye(rect, state) {
-      rect.setAttribute('x', state.x);
-      rect.setAttribute('y', state.y);
-      rect.setAttribute('width', state.width);
-      rect.setAttribute('height', state.height);
-      rect.setAttribute('rx', state.rx);
-      rect.setAttribute('ry', state.ry);
-    }
-
-    function resetEyes() {
-      leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
-      rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
-      updateEye(rectLeft, leftEyeState);
-      updateEye(rectRight, rightEyeState);
-      removeHearts();
-      rectLeft.style.display = '';
-      rectRight.style.display = '';
-      rectLeft.setAttribute('fill', '#4a6fff');
-      rectRight.setAttribute('fill', '#4a6fff');
-      rectLeft.setAttribute('filter', 'url(#glow)');
-      rectRight.setAttribute('filter', 'url(#glow)');
-    }
-
-    async function blink() {
-      const steps = 6;
-      for(let i=0; i<steps; i++) {
-        leftEyeState.height -= REF_EYE_HEIGHT / steps;
-        rightEyeState.height -= REF_EYE_HEIGHT / steps;
-        leftEyeState.y += (REF_EYE_HEIGHT / steps) / 2;
-        rightEyeState.y += (REF_EYE_HEIGHT / steps) / 2;
-        leftEyeState.rx = Math.max(1, leftEyeState.height / 4);
-        leftEyeState.ry = leftEyeState.rx;
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.rx;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      for(let i=0; i<steps; i++) {
-        leftEyeState.height += REF_EYE_HEIGHT / steps;
-        rightEyeState.height += REF_EYE_HEIGHT / steps;
-        leftEyeState.y -= (REF_EYE_HEIGHT / steps) / 2;
-        rightEyeState.y -= (REF_EYE_HEIGHT / steps) / 2;
-        leftEyeState.rx = Math.min(REF_CORNER_RADIUS, leftEyeState.height / 4);
-        leftEyeState.ry = leftEyeState.rx;
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.rx;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-
-    async function moveEyes(dx, dy, steps=10, delay=40) {
-      for(let i=0; i<steps; i++) {
-        leftEyeState.x += dx / steps;
-        rightEyeState.x += dx / steps;
-        leftEyeState.y += dy / steps;
-        rightEyeState.y += dy / steps;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, delay));
-      }
-    }
-    async function moveEyesBack(dx, dy, steps=10, delay=40) {
-      for(let i=0; i<steps; i++) {
-        leftEyeState.x -= dx / steps;
-        rightEyeState.x -= dx / steps;
-        leftEyeState.y -= dy / steps;
-        rightEyeState.y -= dy / steps;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, delay));
-      }
-    }
-
-    // Hearts management with rarer appearance
-    let heartLeft = null;
-    let heartRight = null;
-    let loveExpressionCooldown = false;
-
-    function createHeart(svg) {
-      let heart = svg.querySelector('path.heart');
-      if(heart) heart.remove();
-      heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      heart.setAttribute('d', "M50 15 C35 0, 0 0, 0 37.5 C0 75, 50 90, 50 120 C50 90, 100 75, 100 37.5 C100 0, 65 0, 50 15 Z");
-      heart.setAttribute('fill', '#ff4d6d');
-      heart.setAttribute('filter', 'url(#glow)');
-      heart.classList.add('heart');
-      svg.appendChild(heart);
-      heart.style.transformOrigin = '50% 60%';
-      heart.style.transition = 'transform 0.3s ease';
-      return heart;
-    }
-
-    function removeHearts() {
-      if (heartLeft) {
-        heartLeft.remove();
-        heartLeft = null;
-      }
-      if (heartRight) {
-        heartRight.remove();
-        heartRight = null;
-      }
-    }
-
-    async function loveExpression() {
-      if (loveExpressionCooldown) return;
-      loveExpressionCooldown = true;
-
-      rectLeft.style.display = 'none';
-      rectRight.style.display = 'none';
-
-      heartLeft = createHeart(svgLeft);
-      heartRight = createHeart(svgRight);
-
-      const beatDuration = 700;
-      let growing = true;
-      let beats = 0;
-      const maxBeats = 6;
-
-      return new Promise((resolve) => {
-        function beat() {
-          if (beats >= maxBeats) {
-            removeHearts();
-            rectLeft.style.display = '';
-            rectRight.style.display = '';
-            resetEyes();
-            resolve();
-            setTimeout(() => { loveExpressionCooldown = false; }, 25000);
-            return;
-          }
-          if (growing) {
-            heartLeft.style.transform = 'scale(1.3)';
-            heartRight.style.transform = 'scale(1.3)';
-          } else {
-            heartLeft.style.transform = 'scale(1)';
-            heartRight.style.transform = 'scale(1)';
-            beats++;
-          }
-          growing = !growing;
-          setTimeout(beat, beatDuration);
-        }
-        beat();
-      });
-    }
-
-    async function happyExpression() {
-      const origLeft = {...leftEyeState};
-      const origRight = {...rightEyeState};
-      for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.max(8, leftEyeState.rx - 1);
-        leftEyeState.ry = Math.max(8, leftEyeState.ry - 1);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height -= 3;
-        rightEyeState.height -= 3;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      await new Promise(r=>setTimeout(r, 1600));
-      for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height += 3;
-        rightEyeState.height += 3;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-
-    async function sadExpression() {
-      const origLeft = {...leftEyeState};
-      const origRight = {...rightEyeState};
-      for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.min(35, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(35, leftEyeState.ry + 1);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height += 4;
-        rightEyeState.height += 4;
-        leftEyeState.y -= 1.5;
-        rightEyeState.y -= 1.5;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      await new Promise(r=>setTimeout(r, 1600));
-      for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.max(origLeft.rx, leftEyeState.rx - 1);
-        leftEyeState.ry = Math.max(origLeft.ry, leftEyeState.ry - 1);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height -= 4;
-        rightEyeState.height -= 4;
-        leftEyeState.y += 1.5;
-        rightEyeState.y += 1.5;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-
-    async function surprisedExpression() {
-      const origLeft = {...leftEyeState};
-      const origRight = {...rightEyeState};
-      for(let i=0; i<10; i++) {
-        leftEyeState.width += 7;
-        rightEyeState.width += 7;
-        leftEyeState.height += 14;
-        rightEyeState.height += 14;
-        leftEyeState.rx = Math.max(1, leftEyeState.rx - 3);
-        leftEyeState.ry = Math.max(1, leftEyeState.ry - 3);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.x -= 3.5;
-        rightEyeState.x -= 3.5;
-        leftEyeState.y -= 7;
-        rightEyeState.y -= 7;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      await new Promise(r=>setTimeout(r, 1700));
-      for(let i=0; i<10; i++) {
-        leftEyeState.width -= 7;
-        rightEyeState.width -= 7;
-        leftEyeState.height -= 14;
-        rightEyeState.height -= 14;
-        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 3);
-        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 3);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.x += 3.5;
-        rightEyeState.x += 3.5;
-        leftEyeState.y += 7;
-        rightEyeState.y += 7;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-
-    async function angryExpression() {
-      const origLeft = {...leftEyeState};
-      const origRight = {...rightEyeState};
-      for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.max(1, leftEyeState.rx - 1);
-        leftEyeState.ry = Math.max(1, leftEyeState.ry - 2);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height -= 5;
-        rightEyeState.height -= 5;
-        leftEyeState.y += 4;
-        rightEyeState.y += 4;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      await new Promise(r=>setTimeout(r, 1600));
-      for(let i=0; i<10; i++) {
-        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.height += 5;
-        rightEyeState.height += 5;
-        leftEyeState.y -= 4;
-        rightEyeState.y -= 4;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-    
-    async function fearExpression() {
-      const origLeft = {...leftEyeState};
-      const origRight = {...rightEyeState};
-      for(let i=0; i<8; i++) {
-        leftEyeState.height -= 6;
-        rightEyeState.height -= 6;
-        leftEyeState.y -= 3;
-        rightEyeState.y -= 3;
-        leftEyeState.rx = Math.max(5, leftEyeState.rx - 1);
-        leftEyeState.ry = Math.max(5, leftEyeState.ry - 1);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      await new Promise(r => setTimeout(r, 1600));
-      for(let i=0; i<8; i++) {
-        leftEyeState.height += 6;
-        rightEyeState.height += 6;
-        leftEyeState.y += 3;
-        rightEyeState.y += 3;
-        leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
-        leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-
-    async function squintExpression() {
-      const origLeft = {...leftEyeState};
-      const origRight = {...rightEyeState};
-      for(let i=0; i<8; i++) {
-        leftEyeState.width -= 8;
-        rightEyeState.width -= 8;
-        leftEyeState.rx = Math.min(REF_CORNER_RADIUS + 15, leftEyeState.rx + 2);
-        leftEyeState.ry = Math.min(REF_CORNER_RADIUS + 15, leftEyeState.ry + 2);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.x += 4;
-        rightEyeState.x += 4;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      await new Promise(r => setTimeout(r, 1600));
-      for(let i=0; i<8; i++) {
-        leftEyeState.width += 8;
-        rightEyeState.width += 8;
-        leftEyeState.rx = Math.max(REF_CORNER_RADIUS, leftEyeState.rx - 2);
-        leftEyeState.ry = Math.max(REF_CORNER_RADIUS, leftEyeState.ry - 2);
-        rightEyeState.rx = leftEyeState.rx;
-        rightEyeState.ry = leftEyeState.ry;
-        leftEyeState.x -= 4;
-        rightEyeState.x -= 4;
-        updateEye(rectLeft, leftEyeState);
-        updateEye(rectRight, rightEyeState);
-        await new Promise(r => setTimeout(r, 40));
-      }
-      resetEyes();
-    }
-
-    async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 3500));
-    }
-
-    const expressions = [
-      happyExpression,
-      sadExpression,
-      surprisedExpression,
-      angryExpression,
-      loveExpression,
-      neutralExpression,
-      fearExpression,
-      squintExpression,
-    ];
-
-    function getRandomExpression() {
-      let pool = expressions.filter(exp => exp !== loveExpression);
-      if (Math.random() < 0.1) {
-        pool.push(loveExpression);
-      }
-      return pool[Math.floor(Math.random() * pool.length)];
-    }
-
-    async function eyeAnimationLoop() {
-      resetEyes();
-      while(true) {
-        const moves = [
-          [10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
-        ];
-        const move = moves[Math.floor(Math.random() * moves.length)];
-        await moveEyes(move[0], move[1]);
-        await moveEyesBack(move[0], move[1]);
-
-        await blink();
-
-        const expr = getRandomExpression();
-        await expr();
-      }
-    }
-
-    function startEyeAnimation() {
-      eyeAnimationLoop();
-    }
-
-    window.addEventListener('load', () => {
-      startEyeAnimation();
-    });
-
-    // Рот - анимация пульсации линий
-
-    const wavePaths = [
-      document.getElementById('wave1'),
-      document.getElementById('wave2'),
-      document.getElementById('wave3'),
-      document.getElementById('wave4'),
-    ];
-
+    // Mouth animation
+    const wave = document.getElementById('wave');
     const basePoints = [
-      [0,40],[35,40],[44,10],[53,70],[62,40],[97,40],       // wave1
-      [97,40],[132,40],[141,20],[150,60],[159,40],[194,40], // wave2
-      [194,40],[229,40],[238,15],[247,65],[256,40],[291,40],// wave3
-      [291,40],[326,40],[335,18],[344,62],[353,40],[350,40],// wave4
+      [0,10],[8,10],[11,3],[14,17],[17,10],[25,10]
     ];
 
     let startTime = null;
@@ -774,26 +343,11 @@
 
       let points = basePoints.map(p => p.slice());
 
-      points[2][1] = pulse(10, 9, 3, 0);
-      points[3][1] = pulse(70, 9, 3, Math.PI);
+      points[2][1] = pulse(3, 4, 3, 0);
+      points[3][1] = pulse(17, 4, 3, Math.PI);
 
-      points[8][1] = pulse(20, 7, 3.5, Math.PI / 2);
-      points[9][1] = pulse(60, 7, 3.5, 3 * Math.PI / 2);
-
-      points[14][1] = pulse(15, 8, 4, Math.PI);
-      points[15][1] = pulse(65, 8, 4, 0);
-
-      points[20][1] = pulse(18, 6, 3.2, Math.PI / 3);
-      points[21][1] = pulse(62, 6, 3.2, 4 * Math.PI / 3);
-
-      function makeD(startIndex) {
-        return `M${points[startIndex][0]} ${points[startIndex][1]} L${points[startIndex+1][0]} ${points[startIndex+1][1]} L${points[startIndex+2][0]} ${points[startIndex+2][1]} L${points[startIndex+3][0]} ${points[startIndex+3][1]} L${points[startIndex+4][0]} ${points[startIndex+4][1]} L${points[startIndex+5][0]} ${points[startIndex+5][1]}`;
-      }
-
-      wavePaths[0].setAttribute('d', makeD(0));
-      wavePaths[1].setAttribute('d', makeD(6));
-      wavePaths[2].setAttribute('d', makeD(12));
-      wavePaths[3].setAttribute('d', makeD(18));
+      const d = `M${points[0][0]} ${points[0][1]} L${points[1][0]} ${points[1][1]} L${points[2][0]} ${points[2][1]} L${points[3][0]} ${points[3][1]} L${points[4][0]} ${points[4][1]} L${points[5][0]} ${points[5][1]}`;
+      wave.setAttribute('d', d);
 
       requestAnimationFrame(animateMouth);
     }
