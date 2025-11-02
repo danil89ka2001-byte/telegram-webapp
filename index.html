@@ -173,10 +173,10 @@
     /* Центрируем контейнер глаз по горизонтали, уменьшаем расстояние между глазами */
     .eyes-container {
       display: flex;
-      gap: 25px; /* уменьшил с 50px до 25px */
-      width: 295px; /* уменьшена ширина с 350px */
+      gap: 25px; /* уменьшено */
+      width: 295px; /* уменьшена ширина */
       height: 160px;
-      margin: 0 auto; /* центрируем */
+      margin: 0 auto;
       position: relative;
       padding-right: 20px;
       box-sizing: content-box;
@@ -207,12 +207,11 @@
       pointer-events: none;
     }
 
-    /* Центрируем рот под глазами, сделаем ширину равной ширине глаза (135px) */
+    /* Подвижный рот - пульсирующая линия сердца */
     .mouth-container {
-      width: 135px; /* равна ширине глаза */
-      height: 21px;
-      margin: 0 auto;
-      margin-top: 6px;
+      width: 350px;
+      height: 80px;
+      margin: 6px auto 0 auto;
       position: relative;
       overflow: visible;
     }
@@ -223,40 +222,14 @@
       overflow: visible;
     }
 
-    /* Волны рта с независимым движением и изменением высоты */
-    .wave-segment {
+    path.mouth-wave {
       fill: none;
-      stroke: #4a6fff;
-      stroke-width: 3;
-      filter: drop-shadow(0 0 5px #4a6fffaa);
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      animation-direction: alternate;
+      stroke: #00aaff;
+      stroke-width: 4;
+      filter: drop-shadow(0 0 8px #00aaff);
+      stroke-linejoin: round;
+      stroke-linecap: round;
       vector-effect: non-scaling-stroke;
-      transform-origin: center bottom;
-    }
-
-    /* Анимации для каждого сегмента волны */
-    .wave-segment:nth-child(odd) {
-      animation-name: waveUpDown;
-      animation-duration: 1.5s;
-    }
-
-    .wave-segment:nth-child(even) {
-      animation-name: waveDownUp;
-      animation-duration: 1.8s;
-    }
-
-    @keyframes waveUpDown {
-      0% { transform: translateY(0); stroke-width: 2; }
-      50% { transform: translateY(-8px); stroke-width: 4; }
-      100% { transform: translateY(0); stroke-width: 2; }
-    }
-
-    @keyframes waveDownUp {
-      0% { transform: translateY(0); stroke-width: 2; }
-      50% { transform: translateY(8px); stroke-width: 4; }
-      100% { transform: translateY(0); stroke-width: 2; }
     }
   </style>
 </head>
@@ -297,18 +270,13 @@
         <rect id="rect-right" class="eye-rect" x="20" y="48" width="85" height="85" />
       </svg>
     </div>
-    <div class="mouth-container" aria-label="Анимированный рот в виде волн" role="img">
-      <svg class="mouth-svg" viewBox="0 0 135 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" >
-        <!-- 9 сегментов волны по ~15px шириной -->
-        <path class="wave-segment" d="M0 10 L7 10 L7 0 L15 0 L15 10" />
-        <path class="wave-segment" d="M15 10 L22 10 L22 20 L30 20 L30 10" />
-        <path class="wave-segment" d="M30 10 L37 10 L37 0 L45 0 L45 10" />
-        <path class="wave-segment" d="M45 10 L52 10 L52 20 L60 20 L60 10" />
-        <path class="wave-segment" d="M60 10 L67 10 L67 0 L75 0 L75 10" />
-        <path class="wave-segment" d="M75 10 L82 10 L82 20 L90 20 L90 10" />
-        <path class="wave-segment" d="M90 10 L97 10 L97 0 L105 0 L105 10" />
-        <path class="wave-segment" d="M105 10 L112 10 L112 20 L120 20 L120 10" />
-        <path class="wave-segment" d="M120 10 L127 10 L127 0 L135 0 L135 10" />
+    <div class="mouth-container" aria-label="Анимированный рот пульса" role="img">
+      <svg class="mouth-svg" viewBox="0 0 350 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" >
+        <!-- 4 пульсирующие волны -->
+        <path id="wave1" class="mouth-wave" d="M0 40 L35 40 L44 10 L53 70 L62 40 L97 40" />
+        <path id="wave2" class="mouth-wave" d="M97 40 L132 40 L141 20 L150 60 L159 40 L194 40" />
+        <path id="wave3" class="mouth-wave" d="M194 40 L229 40 L238 15 L247 65 L256 40 L291 40" />
+        <path id="wave4" class="mouth-wave" d="M291 40 L326 40 L335 18 L344 62 L353 40 L350 40" />
       </svg>
     </div>
   </div>
@@ -777,6 +745,59 @@
     window.addEventListener('load', () => {
       startEyeAnimation();
     });
+
+    // Рот - анимация пульсации линий
+
+    const wavePaths = [
+      document.getElementById('wave1'),
+      document.getElementById('wave2'),
+      document.getElementById('wave3'),
+      document.getElementById('wave4'),
+    ];
+
+    const basePoints = [
+      [0,40],[35,40],[44,10],[53,70],[62,40],[97,40],       // wave1
+      [97,40],[132,40],[141,20],[150,60],[159,40],[194,40], // wave2
+      [194,40],[229,40],[238,15],[247,65],[256,40],[291,40],// wave3
+      [291,40],[326,40],[335,18],[344,62],[353,40],[350,40],// wave4
+    ];
+
+    let startTime = null;
+
+    function animateMouth(time) {
+      if (!startTime) startTime = time;
+      const elapsed = (time - startTime) / 1000;
+
+      function pulse(baseY, amplitude, speed, phase) {
+        return baseY + amplitude * Math.sin(speed * elapsed + phase);
+      }
+
+      let points = basePoints.map(p => p.slice());
+
+      points[2][1] = pulse(10, 9, 3, 0);
+      points[3][1] = pulse(70, 9, 3, Math.PI);
+
+      points[8][1] = pulse(20, 7, 3.5, Math.PI / 2);
+      points[9][1] = pulse(60, 7, 3.5, 3 * Math.PI / 2);
+
+      points[14][1] = pulse(15, 8, 4, Math.PI);
+      points[15][1] = pulse(65, 8, 4, 0);
+
+      points[20][1] = pulse(18, 6, 3.2, Math.PI / 3);
+      points[21][1] = pulse(62, 6, 3.2, 4 * Math.PI / 3);
+
+      function makeD(startIndex) {
+        return `M${points[startIndex][0]} ${points[startIndex][1]} L${points[startIndex+1][0]} ${points[startIndex+1][1]} L${points[startIndex+2][0]} ${points[startIndex+2][1]} L${points[startIndex+3][0]} ${points[startIndex+3][1]} L${points[startIndex+4][0]} ${points[startIndex+4][1]} L${points[startIndex+5][0]} ${points[startIndex+5][1]}`;
+      }
+
+      wavePaths[0].setAttribute('d', makeD(0));
+      wavePaths[1].setAttribute('d', makeD(6));
+      wavePaths[2].setAttribute('d', makeD(12));
+      wavePaths[3].setAttribute('d', makeD(18));
+
+      requestAnimationFrame(animateMouth);
+    }
+    requestAnimationFrame(animateMouth);
   </script>
 </body>
 </html>
