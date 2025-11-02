@@ -168,7 +168,7 @@
       display: flex;
       user-select: none;
       padding-left: 20px;
-      padding-top: 60px; /* shift eyes container down to be just above center vertically */
+      padding-top: 70px; /* slightly lower than before */
     }
 
     /* Container for the eyes centered with adjusted size and enough right padding */
@@ -179,8 +179,7 @@
       height: 160px;
       position: relative;
       padding-right: 20px; /* дополнительный отступ справа */
-      /* center horizontally with a small right shift */
-      margin-left: 10px; /* small right shift */
+      margin-left: 18px; /* большее смещение вправо */
     }
 
     svg.eye-svg {
@@ -189,6 +188,10 @@
       overflow: visible;
       box-sizing: content-box;
       padding: 12px; /* сохранили padding */
+      /* Убраны любые рамки и границы */
+      border: none;
+      outline: none;
+      box-shadow: none;
     }
 
     rect.eye-rect {
@@ -311,7 +314,7 @@
     const REF_EYE_HEIGHT = 90;
     const REF_CORNER_RADIUS = 25;
     const REF_X = 20;
-    const REF_Y = 40; // moved eyes slightly higher (y=40)
+    const REF_Y = 40;
 
     let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH*0.85, height: REF_EYE_HEIGHT*0.85, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
     let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH*0.85, height: REF_EYE_HEIGHT*0.85, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
@@ -424,7 +427,7 @@
     }
 
     async function loveExpression() {
-      if (loveExpressionCooldown) return; // Prevent too frequent appearance
+      if (loveExpressionCooldown) return;
       loveExpressionCooldown = true;
 
       rectLeft.style.display = 'none';
@@ -446,7 +449,7 @@
             rectRight.style.display = '';
             resetEyes();
             resolve();
-            setTimeout(() => { loveExpressionCooldown = false; }, 20000); // увеличен кд до 20с
+            setTimeout(() => { loveExpressionCooldown = false; }, 20000);
             return;
           }
           if (growing) {
@@ -478,7 +481,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1200)); // увеличен кд
+      await new Promise(r=>setTimeout(r, 1200));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
@@ -509,7 +512,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1200)); // увеличен кд
+      await new Promise(r=>setTimeout(r, 1200));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.max(origLeft.rx, leftEyeState.rx - 1);
         leftEyeState.ry = Math.max(origLeft.ry, leftEyeState.ry - 1);
@@ -546,7 +549,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1400)); // увеличен кд
+      await new Promise(r=>setTimeout(r, 1400));
       for(let i=0; i<10; i++) {
         leftEyeState.width -= 7;
         rightEyeState.width -= 7;
@@ -583,7 +586,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1200)); // увеличен кд
+      await new Promise(r=>setTimeout(r, 1200));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
@@ -616,7 +619,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r => setTimeout(r, 1200)); // увеличен кд
+      await new Promise(r => setTimeout(r, 1200));
       for(let i=0; i<8; i++) {
         leftEyeState.height += 6;
         rightEyeState.height += 6;
@@ -649,7 +652,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r => setTimeout(r, 1200)); // увеличен кд
+      await new Promise(r => setTimeout(r, 1200));
       for(let i=0; i<8; i++) {
         leftEyeState.width += 8;
         rightEyeState.width += 8;
@@ -667,7 +670,7 @@
     }
 
     async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 3500)); // увеличенный кд между эмоциями
+      await new Promise(r => setTimeout(r, 3500));
     }
 
     const expressions = [
@@ -692,7 +695,6 @@
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
-        // Добавлены отрицательные смещения по оси X для взгляда влево
         const moves = [
           [10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
