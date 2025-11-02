@@ -162,23 +162,23 @@
       font-family: 'Montserrat', sans-serif;
       justify-content: center;
       align-items: flex-start;
-      display: flex;
       user-select: none;
-      padding-left: 20px;
-      padding-top: 70px;
+      padding-top: 80px; /* чуть выше центра */
       flex-direction: column;
       position: relative;
+
+      display: flex; /* сделано для центрирования */
     }
 
-    /* Container for the eyes */
+    /* Центрируем контейнер глаз по горизонтали */
     .eyes-container {
       display: flex;
       gap: 50px;
       width: 350px;
       height: 160px;
+      margin: 0 auto; /* центрируем */
       position: relative;
       padding-right: 20px;
-      margin-left: 20px; /* Возврат к предыдущему смещению (чуть правее центра) */
       box-sizing: content-box;
     }
 
@@ -207,11 +207,12 @@
       pointer-events: none;
     }
 
-    /* Wave mouth container */
+    /* Центрирование рта под глазами */
     .mouth-container {
-      width: 85px; /* Рот 1/4 ширины глаза (85px глаз * 4 = 340px, рот 85px) */
-      height: 21px; /* Пропорционально уменьшена высота (примерно 1/4 высоты глаз) */
-      margin: 15px 0 0 140px; /* Отступ сверху и сдвиг влево, чтобы рот был под глазами и ровно по центру */
+      width: 85px;
+      height: 21px;
+      margin: 0 auto;
+      margin-top: 10px;
       position: relative;
       overflow: visible;
     }
@@ -222,24 +223,25 @@
       overflow: visible;
     }
 
-    /* Более резкие волны для рта */
+    /* Волны рта с острыми пиками разной высоты */
     path.wave {
       fill: none;
-      stroke: #4a6fff; /* Цвет как глаза */
+      stroke: #4a6fff;
       stroke-width: 3;
       filter: drop-shadow(0 0 5px #4a6fffaa);
       animation: waveAnim 1.5s ease-in-out infinite;
+      transition: d 0.3s ease;
     }
 
     @keyframes waveAnim {
       0% {
-        d: path("M0 10 Q10 0 20 10 T40 10 T60 10 T80 10");
+        d: path("M0 10 L8 0 L16 10 L24 0 L32 10 L40 0 L48 10 L56 0 L64 10 L72 0 L80 10");
       }
       50% {
-        d: path("M0 10 Q10 20 20 10 T40 10 T60 10 T80 10");
+        d: path("M0 10 L8 20 L16 10 L24 20 L32 10 L40 20 L48 10 L56 20 L64 10 L72 20 L80 10");
       }
       100% {
-        d: path("M0 10 Q10 0 20 10 T40 10 T60 10 T80 10");
+        d: path("M0 10 L8 0 L16 10 L24 0 L32 10 L40 0 L48 10 L56 0 L64 10 L72 0 L80 10");
       }
     }
   </style>
@@ -283,7 +285,7 @@
     </div>
     <div class="mouth-container" aria-label="Анимированный рот в виде волн" role="img">
       <svg class="mouth-svg" viewBox="0 0 80 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path class="wave" d="M0 10 Q10 0 20 10 T40 10 T60 10 T80 10" />
+        <path class="wave" d="M0 10 L8 0 L16 10 L24 0 L32 10 L40 0 L48 10 L56 0 L64 10 L72 0 L80 10" />
       </svg>
     </div>
   </div>
