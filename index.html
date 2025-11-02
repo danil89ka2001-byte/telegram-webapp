@@ -102,6 +102,8 @@
       text-align: center;
       position: relative;
       font-family: 'Montserrat', sans-serif;
+      max-width: 100vw;
+      width: 100%;
     }
 
     #content h2 {
@@ -160,26 +162,30 @@
     #workspace {
       display: none;
       height: 100vh;
+      width: 100vw; /* full width */
       background: linear-gradient(135deg, #0a152a, #1d2a47);
       color: #e0f7fa;
       font-family: 'Montserrat', sans-serif;
       justify-content: center;
-      align-items: flex-start; /* align items at top */
+      align-items: flex-start; /* align items near top */
       display: flex;
       user-select: none;
       padding-left: 20px;
-      padding-top: 70px; /* slightly lower than before */
+      padding-top: 70px; /* slightly lower */
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     /* Container for the eyes centered with adjusted size and enough right padding */
     .eyes-container {
       display: flex;
       gap: 50px; /* расстояние между глазами */
-      width: 350px; /* увеличена ширина, чтобы правый глаз не обрезался */
+      width: 350px; /* ширина контейнера */
       height: 160px;
       position: relative;
-      padding-right: 20px; /* дополнительный отступ справа */
-      margin-left: 18px; /* большее смещение вправо */
+      padding-right: 20px;
+      margin-left: 22px; /* чуть больше вправо для центрирования на телефоне */
+      box-sizing: content-box;
     }
 
     svg.eye-svg {
@@ -187,19 +193,20 @@
       height: 120px; /* чуть меньше высота */
       overflow: visible;
       box-sizing: content-box;
-      padding: 12px; /* сохранили padding */
-      /* Убраны любые рамки и границы */
-      border: none;
+      padding: 12px;
+      border: none; /* убрать рамки */
       outline: none;
       box-shadow: none;
+      background: none; /* убрать фон */
     }
 
     rect.eye-rect {
       fill: #4a6fff;
-      rx: 25;  /* радиус скругления сохранен */
+      rx: 25;
       ry: 25;
       filter: url(#glow);
       transition: all 0.2s ease;
+      shape-rendering: geometricPrecision;
     }
 
     path.heart {
