@@ -178,7 +178,7 @@
       height: 160px;
       position: relative;
       padding-right: 20px;
-      margin-left: 8px;
+      margin-left: 20px; /* Возврат к предыдущему смещению (чуть правее центра) */
       box-sizing: content-box;
     }
 
@@ -209,9 +209,9 @@
 
     /* Wave mouth container */
     .mouth-container {
-      width: 300px;
-      height: 60px;
-      margin: 20px auto 0;
+      width: 85px; /* Рот 1/4 ширины глаза (85px глаз * 4 = 340px, рот 85px) */
+      height: 21px; /* Пропорционально уменьшена высота (примерно 1/4 высоты глаз) */
+      margin: 15px 0 0 140px; /* Отступ сверху и сдвиг влево, чтобы рот был под глазами и ровно по центру */
       position: relative;
       overflow: visible;
     }
@@ -222,24 +222,24 @@
       overflow: visible;
     }
 
-    /* Wave path style */
+    /* Более резкие волны для рта */
     path.wave {
       fill: none;
-      stroke: #4ade80;
-      stroke-width: 4;
-      filter: drop-shadow(0 0 6px #4ade80aa);
-      animation: waveAnim 2.5s ease-in-out infinite;
+      stroke: #4a6fff; /* Цвет как глаза */
+      stroke-width: 3;
+      filter: drop-shadow(0 0 5px #4a6fffaa);
+      animation: waveAnim 1.5s ease-in-out infinite;
     }
 
     @keyframes waveAnim {
       0% {
-        d: path("M0 30 Q30 20 60 30 T120 30 T180 30 T240 30 T300 30");
+        d: path("M0 10 Q10 0 20 10 T40 10 T60 10 T80 10");
       }
       50% {
-        d: path("M0 30 Q30 40 60 30 T120 30 T180 30 T240 30 T300 30");
+        d: path("M0 10 Q10 20 20 10 T40 10 T60 10 T80 10");
       }
       100% {
-        d: path("M0 30 Q30 20 60 30 T120 30 T180 30 T240 30 T300 30");
+        d: path("M0 10 Q10 0 20 10 T40 10 T60 10 T80 10");
       }
     }
   </style>
@@ -282,8 +282,8 @@
       </svg>
     </div>
     <div class="mouth-container" aria-label="Анимированный рот в виде волн" role="img">
-      <svg class="mouth-svg" viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path class="wave" d="M0 30 Q30 20 60 30 T120 30 T180 30 T240 30 T300 30" />
+      <svg class="mouth-svg" viewBox="0 0 80 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path class="wave" d="M0 10 Q10 0 20 10 T40 10 T60 10 T80 10" />
       </svg>
     </div>
   </div>
