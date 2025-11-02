@@ -165,34 +165,35 @@
       display: flex;
       user-select: none;
       padding-left: 20px;
-      padding-top: 60px; /* чуть выше центра */
+      padding-top: 70px; /* опущены глаза чуть ниже */
     }
 
     /* Container for the eyes centered with adjusted size and enough right padding */
     .eyes-container {
       display: flex;
       gap: 50px; /* расстояние между глазами */
-      width: 350px; /* увеличена ширина, чтобы правый глаз не обрезался */
+      width: 350px; /* ширина контейнера */
       height: 160px;
       position: relative;
-      padding-right: 20px; /* дополнительный отступ справа */
-      margin-left: 20px; /* чуть правее центра */
+      padding-right: 20px;
+      margin-left: 8px; /* смещены глаза чуть левее центра */
     }
 
     svg.eye-svg {
-      width: 140px;
-      height: 140px;
+      width: 135px; /* уменьшены глаза чуток */
+      height: 135px; /* уменьшены глаза чуток */
       overflow: visible;
       box-sizing: content-box;
-      padding: 12px; /* увеличен padding чтобы границы не заходили */
+      padding: 12px;
     }
 
     rect.eye-rect {
       fill: #4a6fff;
-      rx: 25;  /* радиус скругления */
+      rx: 25;
       ry: 25;
       filter: url(#glow);
       transition: all 0.2s ease;
+      shape-rendering: geometricPrecision;
     }
 
     path.heart {
@@ -230,7 +231,7 @@
             <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-left" class="eye-rect" x="20" y="40" width="90" height="90" />
+        <rect id="rect-left" class="eye-rect" x="20" y="48" width="85" height="85" />
       </svg>
       <svg id="eye-right" class="eye-svg" viewBox="0 0 180 180" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -238,7 +239,7 @@
             <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-right" class="eye-rect" x="20" y="40" width="90" height="90" />
+        <rect id="rect-right" class="eye-rect" x="20" y="48" width="85" height="85" />
       </svg>
     </div>
   </div>
@@ -296,18 +297,16 @@
       showWorkspace();
     });
 
-    // Eye animation code
-
     const rectLeft = document.getElementById('rect-left');
     const rectRight = document.getElementById('rect-right');
     const svgLeft = document.getElementById('eye-left');
     const svgRight = document.getElementById('eye-right');
 
-    const REF_EYE_WIDTH = 90;
-    const REF_EYE_HEIGHT = 90;
+    const REF_EYE_WIDTH = 85;
+    const REF_EYE_HEIGHT = 85;
     const REF_CORNER_RADIUS = 25;
     const REF_X = 20;
-    const REF_Y = 40; // подняты глаза чуть выше центра
+    const REF_Y = 48; // опущены глаза чуть ниже
 
     let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
     let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH, height: REF_EYE_HEIGHT, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
@@ -442,7 +441,7 @@
             rectRight.style.display = '';
             resetEyes();
             resolve();
-            setTimeout(() => { loveExpressionCooldown = false; }, 25000); // увеличенный кд 25с
+            setTimeout(() => { loveExpressionCooldown = false; }, 25000);
             return;
           }
           if (growing) {
@@ -474,7 +473,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1600)); // увеличенный кд
+      await new Promise(r=>setTimeout(r, 1600));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 1);
@@ -505,7 +504,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1600)); // увеличенный кд
+      await new Promise(r=>setTimeout(r, 1600));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.max(origLeft.rx, leftEyeState.rx - 1);
         leftEyeState.ry = Math.max(origLeft.ry, leftEyeState.ry - 1);
@@ -542,7 +541,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1700)); // увеличенный кд
+      await new Promise(r=>setTimeout(r, 1700));
       for(let i=0; i<10; i++) {
         leftEyeState.width -= 7;
         rightEyeState.width -= 7;
@@ -579,7 +578,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r=>setTimeout(r, 1600)); // увеличенный кд
+      await new Promise(r=>setTimeout(r, 1600));
       for(let i=0; i<10; i++) {
         leftEyeState.rx = Math.min(origLeft.rx, leftEyeState.rx + 1);
         leftEyeState.ry = Math.min(origLeft.ry, leftEyeState.ry + 2);
@@ -612,7 +611,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r => setTimeout(r, 1600)); // увеличенный кд
+      await new Promise(r => setTimeout(r, 1600));
       for(let i=0; i<8; i++) {
         leftEyeState.height += 6;
         rightEyeState.height += 6;
@@ -645,7 +644,7 @@
         updateEye(rectRight, rightEyeState);
         await new Promise(r => setTimeout(r, 40));
       }
-      await new Promise(r => setTimeout(r, 1600)); // увеличенный кд
+      await new Promise(r => setTimeout(r, 1600));
       for(let i=0; i<8; i++) {
         leftEyeState.width += 8;
         rightEyeState.width += 8;
@@ -663,7 +662,7 @@
     }
 
     async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 3500)); // увеличенный кд между эмоциями
+      await new Promise(r => setTimeout(r, 3500));
     }
 
     const expressions = [
@@ -688,7 +687,6 @@
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
-        // Глаза могут смотреть и влево и вправо
         const moves = [
           [10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
