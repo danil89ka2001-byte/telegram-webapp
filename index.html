@@ -170,11 +170,11 @@
       display: flex; /* сделано для центрирования */
     }
 
-    /* Центрируем контейнер глаз по горизонтали */
+    /* Центрируем контейнер глаз по горизонтали, уменьшаем расстояние между глазами */
     .eyes-container {
       display: flex;
-      gap: 50px;
-      width: 350px;
+      gap: 25px; /* уменьшил с 50px до 25px */
+      width: 295px; /* уменьшена ширина с 350px */
       height: 160px;
       margin: 0 auto; /* центрируем */
       position: relative;
@@ -207,12 +207,12 @@
       pointer-events: none;
     }
 
-    /* Центрирование рта под глазами */
+    /* Центрируем рот под глазами, сделаем ширину равной ширине глаза (135px) */
     .mouth-container {
-      width: 85px;
+      width: 135px; /* равна ширине глаза */
       height: 21px;
       margin: 0 auto;
-      margin-top: 10px;
+      margin-top: 6px;
       position: relative;
       overflow: visible;
     }
@@ -223,26 +223,40 @@
       overflow: visible;
     }
 
-    /* Волны рта с острыми пиками разной высоты */
-    path.wave {
+    /* Волны рта с независимым движением и изменением высоты */
+    .wave-segment {
       fill: none;
       stroke: #4a6fff;
       stroke-width: 3;
       filter: drop-shadow(0 0 5px #4a6fffaa);
-      animation: waveAnim 1.5s ease-in-out infinite;
-      transition: d 0.3s ease;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+      vector-effect: non-scaling-stroke;
+      transform-origin: center bottom;
     }
 
-    @keyframes waveAnim {
-      0% {
-        d: path("M0 10 L8 0 L16 10 L24 0 L32 10 L40 0 L48 10 L56 0 L64 10 L72 0 L80 10");
-      }
-      50% {
-        d: path("M0 10 L8 20 L16 10 L24 20 L32 10 L40 20 L48 10 L56 20 L64 10 L72 20 L80 10");
-      }
-      100% {
-        d: path("M0 10 L8 0 L16 10 L24 0 L32 10 L40 0 L48 10 L56 0 L64 10 L72 0 L80 10");
-      }
+    /* Анимации для каждого сегмента волны */
+    .wave-segment:nth-child(odd) {
+      animation-name: waveUpDown;
+      animation-duration: 1.5s;
+    }
+
+    .wave-segment:nth-child(even) {
+      animation-name: waveDownUp;
+      animation-duration: 1.8s;
+    }
+
+    @keyframes waveUpDown {
+      0% { transform: translateY(0); stroke-width: 2; }
+      50% { transform: translateY(-8px); stroke-width: 4; }
+      100% { transform: translateY(0); stroke-width: 2; }
+    }
+
+    @keyframes waveDownUp {
+      0% { transform: translateY(0); stroke-width: 2; }
+      50% { transform: translateY(8px); stroke-width: 4; }
+      100% { transform: translateY(0); stroke-width: 2; }
     }
   </style>
 </head>
@@ -284,8 +298,17 @@
       </svg>
     </div>
     <div class="mouth-container" aria-label="Анимированный рот в виде волн" role="img">
-      <svg class="mouth-svg" viewBox="0 0 80 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path class="wave" d="M0 10 L8 0 L16 10 L24 0 L32 10 L40 0 L48 10 L56 0 L64 10 L72 0 L80 10" />
+      <svg class="mouth-svg" viewBox="0 0 135 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" >
+        <!-- 9 сегментов волны по ~15px шириной -->
+        <path class="wave-segment" d="M0 10 L7 10 L7 0 L15 0 L15 10" />
+        <path class="wave-segment" d="M15 10 L22 10 L22 20 L30 20 L30 10" />
+        <path class="wave-segment" d="M30 10 L37 10 L37 0 L45 0 L45 10" />
+        <path class="wave-segment" d="M45 10 L52 10 L52 20 L60 20 L60 10" />
+        <path class="wave-segment" d="M60 10 L67 10 L67 0 L75 0 L75 10" />
+        <path class="wave-segment" d="M75 10 L82 10 L82 20 L90 20 L90 10" />
+        <path class="wave-segment" d="M90 10 L97 10 L97 0 L105 0 L105 10" />
+        <path class="wave-segment" d="M105 10 L112 10 L112 20 L120 20 L120 10" />
+        <path class="wave-segment" d="M120 10 L127 10 L127 0 L135 0 L135 10" />
       </svg>
     </div>
   </div>
