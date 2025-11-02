@@ -19,6 +19,9 @@
       background: #0d0f1a;
       color: #f0f0f5;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     button {
@@ -161,13 +164,11 @@
       color: #e0f7fa;
       font-family: 'Montserrat', sans-serif;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* align items at top */
       display: flex;
       user-select: none;
       padding-left: 20px;
-      /* Move eyes container slightly higher */
-      align-items: flex-start;
-      padding-top: 8px; /* small upward shift */
+      padding-top: 60px; /* shift eyes container down to be just above center vertically */
     }
 
     /* Container for the eyes centered with adjusted size and enough right padding */
@@ -178,8 +179,8 @@
       height: 160px;
       position: relative;
       padding-right: 20px; /* дополнительный отступ справа */
-      /* Shift eyes container up slightly */
-      margin-top: -10px;
+      /* center horizontally with a small right shift */
+      margin-left: 10px; /* small right shift */
     }
 
     svg.eye-svg {
@@ -233,7 +234,7 @@
             <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-left" class="eye-rect" x="20" y="45" width="90" height="90" />
+        <rect id="rect-left" class="eye-rect" x="20" y="40" width="90" height="90" />
       </svg>
       <svg id="eye-right" class="eye-svg" viewBox="0 0 180 180" aria-label="Правый глаз" role="img" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -241,7 +242,7 @@
             <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#4a6fff" flood-opacity="0.6"/>
           </filter>
         </defs>
-        <rect id="rect-right" class="eye-rect" x="20" y="45" width="90" height="90" />
+        <rect id="rect-right" class="eye-rect" x="20" y="40" width="90" height="90" />
       </svg>
     </div>
   </div>
@@ -310,7 +311,7 @@
     const REF_EYE_HEIGHT = 90;
     const REF_CORNER_RADIUS = 25;
     const REF_X = 20;
-    const REF_Y = 40; // moved eyes slightly higher by 5px (was 45)
+    const REF_Y = 40; // moved eyes slightly higher (y=40)
 
     let leftEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH*0.85, height: REF_EYE_HEIGHT*0.85, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
     let rightEyeState = { x: REF_X, y: REF_Y, width: REF_EYE_WIDTH*0.85, height: REF_EYE_HEIGHT*0.85, rx: REF_CORNER_RADIUS, ry: REF_CORNER_RADIUS };
@@ -423,7 +424,7 @@
     }
 
     async function loveExpression() {
-      if (loveExpressionCooldown) return;
+      if (loveExpressionCooldown) return; // Prevent too frequent appearance
       loveExpressionCooldown = true;
 
       rectLeft.style.display = 'none';
@@ -666,7 +667,7 @@
     }
 
     async function neutralExpression() {
-      await new Promise(r => setTimeout(r, 3000)); // существенно увеличен кд между эмоциями
+      await new Promise(r => setTimeout(r, 3500)); // увеличенный кд между эмоциями
     }
 
     const expressions = [
@@ -691,6 +692,7 @@
     async function eyeAnimationLoop() {
       resetEyes();
       while(true) {
+        // Добавлены отрицательные смещения по оси X для взгляда влево
         const moves = [
           [10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,10],[10,-10],[-10,-10],[0,0]
         ];
