@@ -260,8 +260,8 @@
 
     const chatContainer = document.getElementById('chat-container');
     const chatInput = document.getElementById('chat-input');
-    const discordLinkInput = document.getElementById("discord-link-input")
-    const linkDiscordBtn = document.getElementById("link-discord-btn")
+    const discordLinkInput = document.getElementById("discord-link-input");
+    const linkDiscordBtn = document.getElementById("link-discord-btn");
 
     let userAgreed = localStorage.getItem('qvantikUserAgreed') === 'true';
     let websocket;
@@ -304,8 +304,12 @@
             }
         }, 3000); //Уменьшил время для быстрого тестирования
 
+        // Определяем IP-адрес сервера.  Если скрипт запущен локально - то 127.0.0.1
+        // Если на удаленном сервере - то можно указать его IP или доменное имя.
+        const serverIp = window.location.hostname === 'github.com' ? 'YOUR_SERVER_IP_HERE' : 'localhost';
+
         // WebSocket соединение
-        websocket = new WebSocket('ws://localhost:8765'); //Убедитесь что порт совпадает с портом в Python скрипте
+        websocket = new WebSocket(`ws://${serverIp}:8765`); //Убедитесь что порт совпадает с портом в Python скрипте
 
         websocket.onopen = () => {
             console.log('WebSocket connected');
