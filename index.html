@@ -304,36 +304,44 @@
             }
         }, 3000); //Уменьшил время для быстрого тестирования
 
-        // Определяем IP-адрес сервера.  Если скрипт запущен локально - то 127.0.0.1
+        // Определяем IP-адрес сервера. Если скрипт запущен локально - то 127.0.0.1
         // Если на удаленном сервере - то можно указать его IP или доменное имя.
-        const serverIp = window.location.hostname === 'github.com' ? 'YOUR_SERVER_IP_HERE' : 'localhost';
+        // Если запущено в Telegram Webview, будем использовать относительный адрес, предполагая, что сервер доступен по тому же домену.
+        const serverIp = window.Telegram ? window.location.hostname : (window.location.hostname === 'github.com' ? 'YOUR_SERVER_IP_HERE' : 'localhost');
 
-        // WebSocket соединение
-        websocket = new WebSocket(`ws://${serverIp}:8765`); //Убедитесь что порт совпадает с портом в Python скрипте
+        // Проверяем, что WebSocket поддерживается браузером
+        if ('WebSocket' in window) {
+            // WebSocket соединение
+            websocket = new WebSocket(`ws://${serverIp}:8765`); //Убедитесь что порт совпадает с портом в Python скрипте
 
-        websocket.onopen = () => {
-            console.log('WebSocket connected');
-        };
+            websocket.onopen = () => {
+                console.log('WebSocket connected');
+            };
 
-        websocket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+            websocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
 
-            if (data.type === 'discord_message') {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.innerHTML = `<span class="username">${data.username}:</span> ${data.message}`;
-                chatContainer.appendChild(messageElement);
-                chatContainer.scrollTop = chatContainer.scrollHeight; // Автопрокрутка
-            }
-        };
+                if (data.type === 'discord_message') {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    messageElement.innerHTML = `<span class="username">${data.username}:</span> ${data.message}`;
+                    chatContainer.appendChild(messageElement);
+                    chatContainer.scrollTop = chatContainer.scrollHeight; // Автопрокрутка
+                }
+            };
 
-        websocket.onclose = () => {
-            console.log('WebSocket disconnected');
-        };
+            websocket.onclose = () => {
+                console.log('WebSocket disconnected');
+            };
 
-        websocket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+            websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        } else {
+            console.error('WebSocket не поддерживается в вашем браузере.');
+            // Здесь можно добавить альтернативный механизм обмена данными, например, Long Polling или Server-Sent Events
+            // для поддержки старых браузеров или окружений без поддержки WebSocket
+        }
     });
 
     agreeBtn.addEventListener('click', () => {
